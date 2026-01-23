@@ -17,6 +17,7 @@
 		"@astrojs/cloudflare": "^12.6.12",
 		"@tailwindcss/vite": "^4.1.18",
 		"astro": "^5.16.15",
+		"daisyui": "^5.5.14",
 		"tailwindcss": "^4.1.18",
 		"wrangler": "^4.60.0"
 	},
