@@ -1,46 +1,137 @@
-# Astro Starter Kit: Basics
+# Aboard
+
+A kanban-style board application designed to help you focus on what matters. Organize your tasks, visualize your workflow, and maintain focus on your priorities.
+
+## Features
+
+- **Kanban Board** - Visualize your workflow with drag-and-drop columns
+- **Responsive Design** - Works seamlessly on desktop and mobile devices
+- **Clean UI** - Distraction-free interface for maximum focus
+- **Fast Performance** - Built with Astro for lightning-fast load times
+- **Tailwind CSS** - Modern styling with utility-first CSS
+
+## Tech Stack
+
+- **Astro** - Static site generation framework
+- **Tailwind CSS** - Utility-first CSS framework
+- **TypeScript** - Type-safe JavaScript
+- **Vitest** - Unit testing framework
+- **Biome** - Code linter and formatter
+- **Lefthook** - Git hooks manager
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+ or Bun
+- Your favorite code editor
+
+### Installation
 
 ```sh
-bun create astro@latest -- --template basics
+bun install
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+### Development
 
-## 🚀 Project Structure
+Start the development server:
 
-Inside of your Astro project, you'll see the following folders and files:
+```sh
+bun run dev
+```
 
-```text
+Open [http://localhost:4321](http://localhost:4321) in your browser.
+
+### Building
+
+Build for production:
+
+```sh
+bun run build
+```
+
+Preview the production build:
+
+```sh
+bun run preview
+```
+
+## Commands
+
+| Command            | Action                                       |
+| ------------------ | -------------------------------------------- |
+| `bun run dev`      | Start development server at `localhost:4321` |
+| `bun run build`    | Build for production to `./dist/`            |
+| `bun run preview`  | Preview production build locally             |
+| `bun run lint`     | Lint and fix code with Biome                 |
+| `bun run lint:fix` | Check and fix code issues                    |
+| `bun run test`     | Run unit tests with Vitest                   |
+| `bun run test:ui`  | Run tests with visual UI dashboard           |
+
+## Project Structure
+
+```
 /
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
+├── public/              # Static assets
+├── src/
+│   ├── assets/         # Images and SVGs
+│   ├── components/     # Astro components
+│   ├── layouts/        # Layout components
+│   ├── pages/          # Route pages
+│   └── styles/         # Global styles
+├── vitest.config.ts    # Vitest configuration
+├── lefthook.yml        # Git hooks configuration
+└── package.json        # Dependencies and scripts
 ```
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+## Git Hooks
 
-## 🧞 Commands
+This project uses Lefthook for automated quality checks:
 
-All commands are run from the root of the project, from a terminal:
+- **pre-commit** - Auto-formats code with Biome
+- **pre-push** - Runs linting and tests before pushing
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
+## Testing
 
-## 👀 Want to learn more?
+Run tests with Vitest:
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+```sh
+# Run all tests
+bun run test
+
+# Run tests with UI dashboard
+bun run test:ui
+
+# Run tests in watch mode
+bun run test -- --watch
+```
+
+## Code Quality
+
+Maintain code quality with Biome:
+
+```sh
+# Lint and auto-fix
+bun run lint
+
+# Check for issues
+bun run lint:fix
+```
+
+## Contributing
+
+Contributions are welcome! Please ensure:
+
+1. Code passes linting (`bun run lint`)
+2. All tests pass (`bun run test`)
+3. Commit messages are clear and descriptive
+
+## License
+
+MIT - Feel free to use this project for personal or commercial purposes.
+
+## Learn More
+
+- [Astro Documentation](https://docs.astro.build)
+- [Tailwind CSS Documentation](https://tailwindcss.com)
+- [Vitest Documentation](https://vitest.dev)

@@ -8,7 +8,9 @@
 		"preview": "astro preview",
 		"astro": "astro",
 		"lint": "biome lint --write .",
-		"lint:fix": "biome check --write ."
+		"lint:fix": "biome check --write .",
+		"test": "vitest",
+		"test:ui": "vitest --ui"
 	},
 	"dependencies": {
 		"@tailwindcss/vite": "^4.1.18",
