@@ -3,19 +3,22 @@
 	"type": "module",
 	"version": "0.0.1",
 	"scripts": {
+		"astro": "astro",
 		"dev": "astro dev",
 		"build": "astro build",
 		"preview": "astro preview",
-		"astro": "astro",
 		"lint": "biome lint --write .",
 		"lint:fix": "biome check --write .",
 		"test": "vitest",
-		"test:ui": "vitest --ui"
+		"test:ui": "vitest --ui",
+		"w": "wrangler"
 	},
 	"dependencies": {
+		"@astrojs/cloudflare": "^12.6.12",
 		"@tailwindcss/vite": "^4.1.18",
 		"astro": "^5.16.15",
-		"tailwindcss": "^4.1.18"
+		"tailwindcss": "^4.1.18",
+		"wrangler": "^4.60.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.12",
