@@ -3,6 +3,8 @@ export default function SearchBar() {
 		<div class="flex itens-center py-0">
 			<label class="input rounded-full mx-auto">
 				<svg
+					role="img"
+					aria-label="Search Icon"
 					class="h-[1em] opacity-50"
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 24 24"
