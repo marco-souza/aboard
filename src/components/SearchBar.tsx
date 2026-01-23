@@ -1,7 +1,7 @@
 export default function SearchBar() {
 	return (
-		<div class="flex itens-center">
-			<label class="input input-sm rounded-full mx-auto">
+		<div class="flex itens-center py-0">
+			<label class="input rounded-full mx-auto">
 				<svg
 					class="h-[1em] opacity-50"
 					xmlns="http://www.w3.org/2000/svg"
