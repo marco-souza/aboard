@@ -1,0 +1,29 @@
+---
+interface Props {
+	boardName?: string;
+}
+
+const { boardName = "Playground" } = Astro.props;
+---
+
+<nav class="navbar flex-col w-full py-8">
+  <div class="hover:animate-pulse text-2xl mx-auto font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+    Aboard
+  </div>
+
+  <div class="container mx-auto flex gap-4 text-center items-center py-4">
+    <button class="btn btn-ghost btn-circle hover:animate-pulse"> 🌐 </button>
+
+    <div class="divider flex-1" />
+
+    <h1 class="text-3xl font-bold">
+      {boardName}
+    </h1>
+
+    <div class="divider flex-1" />
+
+    <button class="btn btn-ghost btn-circle hover:animate-pulse"> ⚙️ </button>
+  </div>
+
+  <!-- TODO: Search bar -->
+</nav>
