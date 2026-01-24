@@ -1,4 +1,4 @@
-import { z } from "astro:schema";
+import { z } from "@hono/zod-openapi";
 
 const AppConfigSchema = z.object({
   BASE_URL: z.string().url(),

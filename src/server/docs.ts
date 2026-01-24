@@ -12,13 +12,15 @@ export function configureDocs(app: OpenAPIHono) {
           description: "OpenAPI Specification JSON",
           content: {
             "application/json": {
-              schema: z.object({
-                openapi: z.string(),
-                info: z.object({
-                  title: z.string(),
-                  version: z.string(),
-                }),
-              }),
+              schema: z
+                .object({
+                  openapi: z.string(),
+                  info: z.object({
+                    title: z.string(),
+                    version: z.string(),
+                  }),
+                })
+                .loose(),
             },
           },
         },
