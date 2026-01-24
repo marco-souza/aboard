@@ -8,9 +8,7 @@ const health = await getApiHealthcheck();
 ---
 
 <Layout>
-  Hello
-
   <code>
-    {health}
+    {JSON.stringify(health, null, 2)}
   </code>
 </Layout>

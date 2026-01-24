@@ -1,8 +1,8 @@
-import { posts } from "./posts";
-import { configureDocs } from "./docs";
-import { config } from "~/config";
-import { health } from "./health";
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { config } from "~/config";
+import { configureDocs } from "./docs";
+import { health } from "./health";
+import { posts } from "./posts";
 
 export const app = new OpenAPIHono()
   .basePath("/api/")
