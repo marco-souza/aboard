@@ -1,5 +1,7 @@
 ---
 import Layout from "~/layouts/Layout.astro";
+import SearchBar from "~/components/SearchBar";
+
 import { getApiHealthcheck } from "~/lib/api-client";
 
 // Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
@@ -8,6 +10,10 @@ const health = await getApiHealthcheck();
 ---
 
 <Layout>
+  <div class="container mx-auto px-4 py-4">
+    <SearchBar client:load />
+  </div>
+
   <code>
     {JSON.stringify(health, null, 2)}
   </code>

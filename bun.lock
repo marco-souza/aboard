@@ -7,6 +7,7 @@
       "dependencies": {
         "@astrojs/cloudflare": "^12.6.12",
         "@astrojs/solid-js": "^5.1.3",
+        "@hono/oauth-providers": "^0.8.5",
         "@hono/zod-openapi": "^1.2.0",
         "@scalar/hono-api-reference": "^0.9.36",
         "@tailwindcss/vite": "^4.1.18",
@@ -178,6 +179,8 @@
     "@esbuild/win32-x64": ["@esbuild/win32-x64@0.25.12", "", { "os": "win32", "cpu": "x64" }, "sha512-alJC0uCZpTFrSL0CCDjcgleBXPnCrEAhTBILpeAp7M/OFgoqtAetfBzX0xM00MUsVVPpVjlPuMbREqnZCXaTnA=="],
 
     "@gerrit0/mini-shiki": ["@gerrit0/mini-shiki@3.21.0", "", { "dependencies": { "@shikijs/engine-oniguruma": "^3.21.0", "@shikijs/langs": "^3.21.0", "@shikijs/themes": "^3.21.0", "@shikijs/types": "^3.21.0", "@shikijs/vscode-textmate": "^10.0.2" } }, "sha512-9PrsT5DjZA+w3lur/aOIx3FlDeHdyCEFlv9U+fmsVyjPZh61G5SYURQ/1ebe2U63KbDmI2V8IhIUegWb8hjOyg=="],
+
+    "@hono/oauth-providers": ["@hono/oauth-providers@0.8.5", "", { "peerDependencies": { "hono": ">=3.0.0" } }, "sha512-hgEDH/gUmB/opman9jvT8dLItZsSC9M9yFiaam0b6InK7WQkdzIcaRAkdda47QpixnK9S1Ah2vjDB2U16LkMnA=="],
 
     "@hono/zod-openapi": ["@hono/zod-openapi@1.2.0", "", { "dependencies": { "@asteasolutions/zod-to-openapi": "^8.1.0", "@hono/zod-validator": "^0.7.6", "openapi3-ts": "^4.5.0" }, "peerDependencies": { "hono": ">=4.3.6", "zod": "^4.0.0" } }, "sha512-KDfHqv/Wy4elVseZXgokbHxeWuqBL+AZfqsOMpEihBMUsk/fJ+bLIi3Sf70JFVpt1Ihui8RasYrInozt7ZBDIA=="],
 

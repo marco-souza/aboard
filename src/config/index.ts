@@ -1,9 +1,15 @@
 import { z } from "@hono/zod-openapi";
 
 const AppConfigSchema = z.object({
-  BASE_URL: z.string().url(),
-  GOOGLE_AUTH_KEY: z.string().min(1),
-  GITHUB_AUTH_KEY: z.string().min(1),
+  BASE_URL: z.url(),
+
+  // github
+  GITHUB_ID: z.string().min(1),
+  GITHUB_SECRET: z.string().min(1),
+
+  // google
+  GOOGLE_ID: z.string().min(1),
+  GOOGLE_SECRET: z.string().min(1),
 
   // optional
   NODE_ENV: z.string().optional().default("development"),

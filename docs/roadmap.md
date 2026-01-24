@@ -45,6 +45,9 @@
   - [ ] CardDialogSidebar must list the lanes
 
 - [ ] Users
+  - [x] Register/Sign-in with OpenAPI
+    - [x] set up backend
+    - [x] Set up OAuth2 (github, google)
   - [ ] Create boards and invite other users and groups
   - [ ] Create groups and add members to them
   - [ ] When invited to a board, users will be altomatically watching it

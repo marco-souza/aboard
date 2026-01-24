@@ -19,6 +19,7 @@
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
     "@astrojs/solid-js": "^5.1.3",
+    "@hono/oauth-providers": "^0.8.5",
     "@hono/zod-openapi": "^1.2.0",
     "@scalar/hono-api-reference": "^0.9.36",
     "@tailwindcss/vite": "^4.1.18",
