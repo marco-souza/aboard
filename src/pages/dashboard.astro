@@ -1,0 +1,39 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import TopBar from "~/components/app/TopBar.astro";
+import Board from "~/components/app/Board.astro";
+---
+
+<Layout title="Dashboard - Aboard" showNavbar={false}>
+  <div class="h-screen flex flex-col overflow-hidden bg-base-200/20">
+    <TopBar />
+    
+    <div class="flex-1 flex overflow-hidden">
+        <!-- Sidebar (Activity Feed Mockup) -->
+        <aside class="w-64 bg-base-100/30 backdrop-blur border-r border-base-300 hidden lg:flex flex-col p-4">
+            <h3 class="font-bold text-xs uppercase text-base-content/50 mb-4 px-2">Activity Feed</h3>
+            <div class="space-y-4">
+                <div class="flex gap-3 text-sm">
+                    <div class="avatar placeholder"><div class="w-8 rounded-full bg-primary/20 text-primary"><span>JS</span></div></div>
+                    <div><span class="font-bold">John</span> moved <span class="italic">Fix Login</span> to <span class="badge badge-xs badge-info">Doing</span></div>
+                </div>
+                 <div class="flex gap-3 text-sm">
+                    <div class="avatar placeholder"><div class="w-8 rounded-full bg-secondary/20 text-secondary"><span>AL</span></div></div>
+                    <div><span class="font-bold">Alice</span> commented on <span class="italic">Design System</span></div>
+                </div>
+            </div>
+            
+            <div class="mt-auto">
+                <div class="alert bg-primary/10 border-primary/20 text-xs shadow-lg">
+                    <span>🚀 Pro tip: Press <kbd class="kbd kbd-xs">Cmd</kbd> + <kbd class="kbd kbd-xs">K</kbd> to search</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Kanban Area -->
+        <main class="flex-1 overflow-hidden flex flex-col relative">
+            <Board />
+        </main>
+    </div>
+  </div>
+</Layout>

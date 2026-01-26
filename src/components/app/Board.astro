@@ -1,0 +1,80 @@
+---
+const columns = [
+  { id: "not-now", title: "Not Now", color: "border-gray-500/30" },
+  { id: "maybe", title: "Maybe?", color: "border-yellow-500/30" },
+  { id: "doing", title: "Doing", color: "border-blue-500/30" },
+  { id: "done", title: "Done", color: "border-green-500/30" },
+];
+
+const cards = [
+  {
+    id: 1,
+    title: "Research Competitors",
+    column: "doing",
+    tag: "Strategy",
+    member: "JS",
+  },
+  {
+    id: 2,
+    title: "Design System V2",
+    column: "maybe",
+    tag: "Design",
+    member: "AL",
+  },
+  { id: 3, title: "Fix Login Bug", column: "doing", tag: "Bug", member: "JS" },
+  {
+    id: 4,
+    title: "Launch Marketing Campaign",
+    column: "not-now",
+    tag: "Marketing",
+    member: "MK",
+  },
+  {
+    id: 5,
+    title: "Update Documentation",
+    column: "done",
+    tag: "Docs",
+    member: "JS",
+  },
+];
+---
+<div class="flex-1 overflow-x-auto p-6">
+  <div class="flex gap-6 h-full min-w-[1000px]">
+    {
+      columns.map((col) => (
+        <div class="flex-1 flex flex-col min-w-[280px]">
+          <div class={`flex items-center justify-between mb-4 pb-2 border-b-2 ${col.color}`}>
+            <h3 class="font-bold text-lg uppercase tracking-wider text-base-content/70">{col.title}</h3>
+            <button class="btn btn-ghost btn-xs btn-circle hover:bg-base-200">
+                <span class="text-lg">+</span>
+            </button>
+          </div>
+          
+          <div class="flex-1 flex flex-col gap-3">
+            {
+              cards.filter(c => c.column === col.id).map(card => (
+                <div class="card bg-base-100 hover:bg-base-200 border border-base-300 shadow-md cursor-pointer hover:-translate-y-1 transition-all group">
+                  <div class="card-body p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="badge badge-ghost badge-sm opacity-70">{card.tag}</span>
+                        <div class="avatar placeholder opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div class="bg-neutral-focus text-neutral-content rounded-full w-6">
+                                <span class="text-[10px]">{card.member}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <h4 class="font-medium text-base leading-tight">{card.title}</h4>
+                  </div>
+                </div>
+              ))
+            }
+            
+            <button class="btn btn-ghost btn-block btn-sm opacity-50 hover:opacity-100 border-dashed border border-base-content/20">
+                + Add Card
+            </button>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</div>
