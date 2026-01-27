@@ -1,0 +1,17 @@
+---
+interface Props {
+  title: string;
+  count?: number;
+}
+
+const { title, count = 0 } = Astro.props;
+---
+<div class="h-full flex flex-col items-center gap-4 min-w-[60px]">
+   <div class="bg-base-200 rounded-full w-10 h-10 flex items-center justify-center mb-4 text-xs font-bold shadow-inner">
+     {count}
+   </div>
+
+   <div class="writing-vertical-rl rotate-90 uppercase tracking-widest text-xs font-bold text-base-content/40 whitespace-nowrap">
+     {title}
+   </div>
+</div>

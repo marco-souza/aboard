@@ -1,0 +1,20 @@
+---
+import CollapsedLane from "./CollapsedLane.astro";
+import ExpandedLane from "./ExpandedLane.astro";
+
+interface Props {
+  title: string;
+  count?: number;
+  collapsed?: boolean;
+}
+
+const { title, count = 0, collapsed = false } = Astro.props;
+---
+
+{collapsed ? (
+  <CollapsedLane title={title} count={count} />
+) : (
+  <ExpandedLane title={title}>
+    <slot />
+  </ExpandedLane>
+)}

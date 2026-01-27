@@ -1,16 +1,10 @@
 ---
-const columns = [
-  { id: "not-now", title: "Not Now", color: "border-gray-500/30" },
-  { id: "maybe", title: "Maybe?", color: "border-yellow-500/30" },
-  { id: "doing", title: "Doing", color: "border-blue-500/30" },
-  { id: "done", title: "Done", color: "border-green-500/30" },
-];
-
+import Lane from "./board/Lane.astro";
 const cards = [
   {
     id: 1,
     title: "Research Competitors",
-    column: "doing",
+    column: "maybe",
     tag: "Strategy",
     member: "JS",
   },
@@ -21,60 +15,76 @@ const cards = [
     tag: "Design",
     member: "AL",
   },
-  { id: 3, title: "Fix Login Bug", column: "doing", tag: "Bug", member: "JS" },
+  { id: 3, title: "Fix Login Bug", column: "maybe", tag: "Bug", member: "JS" },
   {
     id: 4,
     title: "Launch Marketing Campaign",
-    column: "not-now",
+    column: "maybe",
     tag: "Marketing",
     member: "MK",
   },
   {
     id: 5,
     title: "Update Documentation",
-    column: "done",
+    column: "maybe",
     tag: "Docs",
+    member: "JS",
+  },
+  {
+    id: 6,
+    title: "Q3 Performance Review",
+    column: "maybe",
+    tag: "HR",
+    member: "AL",
+  },
+  {
+    id: 7,
+    title: "Migrate Database",
+    column: "maybe",
+    tag: "DevOp",
+    member: "MK",
+  },
+  {
+    id: 8,
+    title: "Client Meeting Prep",
+    column: "maybe",
+    tag: "Sales",
     member: "JS",
   },
 ];
 ---
-<div class="flex-1 overflow-x-auto p-6">
-  <div class="flex gap-6 h-full min-w-[1000px]">
-    {
-      columns.map((col) => (
-        <div class="flex-1 flex flex-col min-w-[280px]">
-          <div class={`flex items-center justify-between mb-4 pb-2 border-b-2 ${col.color}`}>
-            <h3 class="font-bold text-lg uppercase tracking-wider text-base-content/70">{col.title}</h3>
-            <button class="btn btn-ghost btn-xs btn-circle hover:bg-base-200">
-                <span class="text-lg">+</span>
-            </button>
-          </div>
-          
-          <div class="flex-1 flex flex-col gap-3">
-            {
-              cards.filter(c => c.column === col.id).map(card => (
-                <div class="card bg-base-100 hover:bg-base-200 border border-base-300 shadow-md cursor-pointer hover:-translate-y-1 transition-all group">
-                  <div class="card-body p-4">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="badge badge-ghost badge-sm opacity-70">{card.tag}</span>
-                        <div class="avatar placeholder opacity-0 group-hover:opacity-100 transition-opacity">
-                            <div class="bg-neutral-focus text-neutral-content rounded-full w-6">
-                                <span class="text-[10px]">{card.member}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <h4 class="font-medium text-base leading-tight">{card.title}</h4>
-                  </div>
-                </div>
-              ))
-            }
-            
-            <button class="btn btn-ghost btn-block btn-sm opacity-50 hover:opacity-100 border-dashed border border-base-content/20">
-                + Add Card
-            </button>
-          </div>
-        </div>
-      ))
-    }
+<div class="flex-1 w-full h-full p-4 overflow-auto">
+  <div class="flex items-center justify-center gap-4 h-full max-w-7xl mx-auto">
+    
+    <Lane title="Not Now" collapsed={true} />
+
+    <Lane title="Maybe?">
+       {
+         cards.map((card) => (
+           <div class="card card-compact bg-base-100 shadow-sm">
+             <div class="card-body">
+               <h2 class="card-title text-sm">{card.title}</h2>
+               <p class="text-xs">{card.tag}</p>
+               <p class="text-xs">{card.member}</p>
+             </div>
+           </div>
+         ))
+       }
+    </Lane>
+
+    <Lane title="Done" collapsed={true} />
+    
+    <!-- Add Column (Vertical) -->
+    <div class="h-full flex flex-col items-center gap-4">
+       <button class="btn btn-circle btn-ghost btn-sm">
+         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+       </button>
+    </div>
   </div>
 </div>
+
+<style>
+  .writing-vertical-lr {
+    writing-mode: vertical-lr;
+  }
+</style>
