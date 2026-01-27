@@ -1,6 +1,6 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
 import { githubAuth } from "@hono/oauth-providers/github";
 import { googleAuth } from "@hono/oauth-providers/google";
+import { OpenAPIHono } from "@hono/zod-openapi";
 import { setCookie } from "hono/cookie";
 import { config } from "~/config";
 
