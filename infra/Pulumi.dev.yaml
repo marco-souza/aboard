@@ -1,0 +1,12 @@
+config:
+  aboard-infra:accountId: b0a2804a399607a0f277e3d712983a00
+  aboard-infra:environment: dev
+  aboard-infra:github-id:
+    secure: v1:1Wg+tVXj2aLLUNdB:fnRd8pAde/OAZMolAhdyoYGQp9DcVkKSVhvyUChboR22kTzX
+  aboard-infra:github-secret:
+    secure: v1:CAMSfgh0EBqycCZ2:I8EZR/ZasAWg/13/sqdak/3Zdw3TE0QMJZ8ZgxrocplI/Ka8ghjDZ75LhTJCb/f3Bp8aIxFZgsc=
+  aboard-infra:google-id:
+    secure: v1:elapjocfFDpcaF/B:/XicpMEjXfMSnuS3DNRiX3CsQ723qw==
+  aboard-infra:google-secret:
+    secure: v1:ARbORMvFFrt/FzqQ:kmR6X6LG3Xe8t7PnGVeDLvDjxyaj2Q==
+encryptionsalt: v1:E5iZITvQ2hQ=:v1:BOgq/Jx2e/7q/H4p:niTaIdorUnErmBiMwnBEVmiXjv45ow==
