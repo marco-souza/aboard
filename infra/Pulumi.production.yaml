@@ -2,11 +2,11 @@ config:
   aboard-infra:accountId: b0a2804a399607a0f277e3d712983a00
   aboard-infra:environment: production
   aboard-infra:github-id:
-    secure: v1:D+oqBgsYPcn4kN/3:lkOK2+qiETeRwZn4hea+2W+a3uPvfyyEZc1g48hKUZWQWrzQ
+    secure: v1:1KmWHTqydCbMlCd2:ZtN+/81yVRv43RNSpMc7ZW1vQldbhE7N+pSsoV19ROy0z+bp
   aboard-infra:github-secret:
-    secure: v1:Z7udJbr6tWPse8/T:cnWqX1zK3JngQjLsNHBG5k3lOOdNuHNv2AbrFEB8edifKwROv4pvITvB6JTz/6wxLgXWErFr/bg=
+    secure: v1:qXqxhPcYxgyozsaZ:X2PVNnzXDtjqFVgNUr66XGqR2CikBJ4SE/4oPVALm4UAn/Lzrq1t9a5mC3DLZlcbEipCb49Q2NQ=
   aboard-infra:google-id:
-    secure: v1:JmAEnUo8grw8SeJk:yHEKt4kn5atFjJJlgmeMff7PuGLSDg==
+    secure: v1:L7FbzkNCsfYRbU87:2inJf4X7yjT56YlGjF3Y2mevDpR2LA==
   aboard-infra:google-secret:
-    secure: v1:fu/5K6Oyn+8k6Iaq:D/Qdv8chcZikCwqmYcR56aShu74LAw==
+    secure: v1:fHeG5taJK0Vzbzk6:5yC9vOCQXx7iLU6v9ok6nzBsTWzwKA==
 encryptionsalt: v1:l0zvedYGFKs=:v1:E7GS0D3iYRpl4DrA:fhBTiks+4At2H5kfKNh6bdpDDMZHjw==

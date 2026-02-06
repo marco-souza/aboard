@@ -44,15 +44,7 @@ const builder = new command.local.Command(
     create: buildCommand,
     update: buildCommand,
     environment: {
-      // pulumi config set --secret github-id $GITHUB_ID
-      GITHUB_ID: pulumi.secret("github-id"),
-      // pulumi config set --secret github-secret $GITHUB_SECRET
-      GITHUB_SECRET: pulumi.secret("github-secret"),
-
-      // pulumi config set --secret google-id $GOOGLE_ID
-      GOOGLE_ID: pulumi.secret("google-id"),
-      // pulumi config set --secret google-secret $GOOGLE_SECRET
-      GOOGLE_SECRET: pulumi.secret("google-secret"),
+      NODE_ENV: "production",
     },
     triggers: [gitCommitHash],
   },
@@ -87,6 +79,8 @@ const worker = new cloudflare.Worker(
   },
 );
 
+const baseUrl = pulumi.interpolate`https://${worker.name}.ma-souza-junior.workers.dev`;
+
 const workerVersion = new cloudflare.WorkerVersion(
   `aboard-worker-version-${environment}`,
   {
@@ -113,6 +107,33 @@ const workerVersion = new cloudflare.WorkerVersion(
         type: "kv_namespace",
         name: "SESSION",
         namespaceId: kvNamespaces.id,
+      },
+
+      // env vars
+      {
+        name: "BASE_URL",
+        type: "plain_text",
+        text: baseUrl,
+      },
+      {
+        name: "GITHUB_ID",
+        type: "plain_text",
+        text: pulumi.secret("github-id"),
+      },
+      {
+        name: "GITHUB_SECRET",
+        type: "plain_text",
+        text: pulumi.secret("github-secret"),
+      },
+      {
+        name: "GOOGLE_ID",
+        type: "plain_text",
+        text: pulumi.secret("google-id"),
+      },
+      {
+        name: "GOOGLE_SECRET",
+        type: "plain_text",
+        text: pulumi.secret("google-secret"),
       },
     ],
 
@@ -147,6 +168,5 @@ const workerDeployment = new cloudflare.WorkersDeployment(
   },
 );
 
-export const workerName = worker.name;
+export const domain = baseUrl;
 export const workerScriptName = workerDeployment.scriptName;
-export const accessibleAt = pulumi.interpolate`https://${worker.name}.ma-souza-junior.workers.dev`;
