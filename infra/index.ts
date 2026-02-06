@@ -73,10 +73,7 @@ const worker = new cloudflare.Worker(
       },
     },
   },
-  {
-    dependsOn: [database],
-    replacementTrigger: [gitCommitHash],
-  },
+  { dependsOn: [database] },
 );
 
 const baseUrl = pulumi.interpolate`https://${worker.name}.ma-souza-junior.workers.dev`;
@@ -117,22 +114,26 @@ const workerVersion = new cloudflare.WorkerVersion(
       },
       {
         name: "GITHUB_ID",
-        type: "plain_text",
+        type: "secret_text",
+        secretName: "github-id",
         text: pulumi.secret("github-id"),
       },
       {
         name: "GITHUB_SECRET",
-        type: "plain_text",
+        type: "secret_text",
+        secretName: "github-secret",
         text: pulumi.secret("github-secret"),
       },
       {
         name: "GOOGLE_ID",
-        type: "plain_text",
+        type: "secret_text",
+        secretName: "google-id",
         text: pulumi.secret("google-id"),
       },
       {
         name: "GOOGLE_SECRET",
-        type: "plain_text",
+        type: "secret_text",
+        secretName: "google-secret",
         text: pulumi.secret("google-secret"),
       },
     ],
