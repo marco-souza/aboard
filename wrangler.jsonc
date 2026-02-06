@@ -1,6 +1,6 @@
 {
   "compatibility_date": "2026-01-23",
-  "compatibility_flags": ["global_fetch_strictly_public"],
+  "compatibility_flags": ["global_fetch_strictly_public", "nodejs_compat"],
   "name": "aboard",
   "main": "dist/_worker.js/index.js",
   "assets": {
