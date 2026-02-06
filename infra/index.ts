@@ -36,9 +36,7 @@ const kvNamespaces = new cloudflare.WorkersKvNamespace(
   },
 );
 
-// TODO: build before deploying
 const buildCommand = pulumi.interpolate`bun run build && bun w build`;
-
 const builder = new command.local.Command(
   "website-build",
   {
