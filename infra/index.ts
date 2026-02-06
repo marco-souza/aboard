@@ -56,7 +56,7 @@ const builder = new command.local.Command(
     },
     triggers: [gitCommitHash],
   },
-  { dependsOn: [database, kvNamespaces] },
+  { dependsOn: [database] },
 );
 
 const worker = new cloudflare.Worker(
@@ -78,7 +78,7 @@ const worker = new cloudflare.Worker(
     },
   },
   {
-    dependsOn: [database, kvNamespaces],
+    dependsOn: [database],
     replacementTrigger: [gitCommitHash],
   },
 );
@@ -103,6 +103,12 @@ const workerVersion = new cloudflare.WorkerVersion(
       {
         type: "assets",
         name: "ASSETS",
+      },
+
+      {
+        type: "kv_namespace",
+        name: "SESSION",
+        namespaceId: kvNamespaces.id,
       },
     ],
 
