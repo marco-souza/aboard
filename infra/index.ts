@@ -12,6 +12,17 @@ const config = new pulumi.Config();
 const environment = config.require("environment");
 const accountId = config.require("accountId");
 
+const secrets = {
+  github: {
+    id: config.requireSecret("github-id"),
+    secret: config.requireSecret("github-secret"),
+  },
+  google: {
+    id: config.requireSecret("google-id"),
+    secret: config.requireSecret("google-secret"),
+  },
+};
+
 const today = () => new Date().toISOString().split("T")[0];
 
 const absolutePath = (relativePath: string) =>
@@ -116,25 +127,25 @@ const workerVersion = new cloudflare.WorkerVersion(
         name: "GITHUB_ID",
         type: "secret_text",
         secretName: "github-id",
-        text: pulumi.secret("github-id"),
+        text: secrets.github.id,
       },
       {
         name: "GITHUB_SECRET",
         type: "secret_text",
         secretName: "github-secret",
-        text: pulumi.secret("github-secret"),
+        text: secrets.github.secret,
       },
       {
         name: "GOOGLE_ID",
         type: "secret_text",
         secretName: "google-id",
-        text: pulumi.secret("google-id"),
+        text: secrets.google.id,
       },
       {
         name: "GOOGLE_SECRET",
         type: "secret_text",
         secretName: "google-secret",
-        text: pulumi.secret("google-secret"),
+        text: secrets.google.secret,
       },
     ],
 
