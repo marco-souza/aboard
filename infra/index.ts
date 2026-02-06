@@ -63,7 +63,11 @@ const worker = new cloudflare.Worker(
   `aboard-${environment}`,
   {
     accountId,
-    name: `aboard-worker-${environment}`,
+    name: `aboard-${environment}`,
+
+    subdomain: {
+      enabled: true,
+    },
 
     tags: ["aboard", environment],
 
@@ -145,4 +149,4 @@ const workerDeployment = new cloudflare.WorkersDeployment(
 
 export const workerName = worker.name;
 export const workerScriptName = workerDeployment.scriptName;
-export const accessibleAt = pulumi.interpolate`https://${worker.name}.workers.dev`;
+export const accessibleAt = pulumi.interpolate`https://${worker.name}.ma-souza-junior.workers.dev`;
