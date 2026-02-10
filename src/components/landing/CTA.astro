@@ -1,4 +1,5 @@
 ---
+import { routes } from "~/config/routes";
 ---
 <section class="py-24 px-4">
   <div class="max-w-4xl mx-auto">
@@ -13,7 +14,7 @@
           Start free. Always free for small teams. Scale when you're ready.
         </p>
         <div class="card-actions justify-center gap-4">
-          <a href="/login" class="btn btn-primary btn-lg shadow-lg hover:shadow-primary/50">
+          <a href={routes.public.login} class="btn btn-primary btn-lg shadow-lg hover:shadow-primary/50">
             Get started free
           </a>
           <a href="/pricing" class="btn btn-ghost btn-lg">

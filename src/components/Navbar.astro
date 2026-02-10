@@ -1,5 +1,5 @@
 ---
-import SearchBar from "./SearchBar";
+import { routes } from "~/config/routes";
 
 interface Props {
   boardName?: string;
@@ -18,12 +18,34 @@ const { boardName = "Playground" } = Astro.props;
 
     <div class="divider flex-1" />
 
-    <h1 class="text-3xl font-bold">
-      {boardName}
-    </h1>
+
+    <!-- logo with title and keyboard shortcut -->
+    <div class="flex items-center gap-2 mb-4">
+      <div class="w-8 h-8 rounded bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-sm">
+        {boardName.slice(0, 1).toUpperCase()}
+      </div>
+      <h1 class="text-3xl font-bold text-base-content tracking-tight">{boardName}</h1>
+
+        <span class="kbd kbd-sm text-xs">Alt</span>
+        <span class="kbd kbd-sm text-xs">A</span>
+
+      <button class="btn btn-ghost btn-xs btn-square opacity-50 hover:opacity-100">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+  
 
     <div class="divider flex-1" />
 
-    <button class="btn btn-ghost btn-circle hover:animate-pulse"> ⚙️ </button>
+    <details class="dropdown">
+      <summary class="btn btn-ghost btn-circle hover:animate-pulse">
+        ⚙️
+      </summary>
+
+      <ul class="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+        <li><a href="#">Profile</a></li>
+        <li><a href={routes.private.logout}>Logout</a></li>
+      </ul>
+    </details>
   </div>
 </nav>

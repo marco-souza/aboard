@@ -1,4 +1,5 @@
 ---
+import { routes } from "~/config/routes";
 import GitHubButton from "~/components/GitHubButton";
 import GoogleButton from "~/components/GoogleButton";
 import Layout from "~/layouts/Layout.astro";
@@ -11,7 +12,7 @@ import Layout from "~/layouts/Layout.astro";
       <div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
       <div class="card-body p-10 text-center relative z-10">
-        <a href="/" class="text-4xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2 inline-block hover:scale-105 transition-transform cursor-pointer">
+        <a href={routes.public.home} class="text-4xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2 inline-block hover:scale-105 transition-transform cursor-pointer">
           Aboard
         </a>
         <p class="text-base-content/60 mb-8 font-medium">Welcome back, Captain.</p>

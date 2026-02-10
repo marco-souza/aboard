@@ -1,5 +1,7 @@
 ---
+import "~/styles/global.css";
 import background from "~/assets/background.svg";
+
 import CTA from "~/components/landing/CTA.astro";
 import FAQ from "~/components/landing/FAQ.astro";
 import Features from "~/components/landing/Features.astro";
@@ -8,8 +10,8 @@ import Hero from "~/components/landing/Hero.astro";
 import PackedFeatures from "~/components/landing/PackedFeatures.astro";
 import Stats from "~/components/landing/Stats.astro";
 import Testimonials from "~/components/landing/Testimonials.astro";
-import Navbar from "~/components/Navbar.astro"; // Use existing Navbar if suitable or inline one
-import "~/styles/global.css";
+
+import { routes } from "~/config/routes";
 ---
 
 <!doctype html>
@@ -41,13 +43,13 @@ import "~/styles/global.css";
     <main class="min-h-screen relative z-10">
       <nav class="navbar sticky top-0 z-50 bg-base-100/80 backdrop-blur-xl border-b border-base-300">
         <div class="flex-1">
-          <a href="/" class="btn btn-ghost text-xl font-bold">
+          <a href={routes.public.home} class="btn btn-ghost text-xl font-bold">
             <span class="gradient-text">Aboard</span>
           </a>
         </div>
         <div class="flex-none gap-4">
-          <a href="/login" class="btn btn-ghost">Sign in</a>
-          <a href="/login" class="btn gradient-btn text-white border-0">Get started</a>
+          <a href={routes.public.login} class="btn btn-ghost">Sign in</a>
+          <a href={routes.public.login} class="btn gradient-btn text-white border-0">Get started</a>
         </div>
       </nav>
 

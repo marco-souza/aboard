@@ -3,6 +3,7 @@ import { googleAuth } from "@hono/oauth-providers/google";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { setCookie } from "hono/cookie";
 import { config } from "~/config";
+import { routes } from "~/config/routes";
 
 export const auth = new OpenAPIHono();
 
@@ -21,7 +22,7 @@ auth.get("/github", (c) => {
   const user = c.get("user-github");
 
   if (!user || !token) {
-    return c.redirect("/login?error=github_auth_failed");
+    return c.redirect(`${routes.public.login}?error=github_auth_failed`);
   }
 
   // In a real app, you'd store this in a DB and create a session
@@ -43,7 +44,7 @@ auth.get("/github", (c) => {
     sameSite: "Lax",
   });
 
-  return c.redirect("/dashboard");
+  return c.redirect(routes.private.dashboard);
 });
 
 auth.use(
@@ -65,4 +66,16 @@ auth.get("/google", (c) => {
     grantedScopes,
     user,
   });
+});
+
+auth.post("/logout", (c) => {
+  setCookie(c, "aboard_session", "", {
+    path: "/",
+    secure: import.meta.env.PROD,
+    httpOnly: true,
+    maxAge: 0,
+    sameSite: "Lax",
+  });
+
+  return c.redirect(routes.public.login);
 });

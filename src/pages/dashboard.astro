@@ -1,14 +1,12 @@
 ---
 import Board from "~/components/app/Board.astro";
-import TopBar from "~/components/app/TopBar.astro";
 import Layout from "~/layouts/Layout.astro";
 ---
 
-<Layout title="Playground - Aboard" showNavbar={false}>
+<Layout title="Playground">
   <div class="h-screen flex flex-col overflow-hidden bg-base-100">
-    <TopBar title="Playground" />
     <main class="flex-1 overflow-hidden relative">
-        <Board />
+      <Board />
     </main>
   </div>
 </Layout>
