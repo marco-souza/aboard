@@ -67,14 +67,35 @@ auth.use(
 
 auth.get("/google", (c) => {
   const token = c.get("token");
-  const grantedScopes = c.get("granted-scopes");
+  // const grantedScopes = c.get("granted-scopes");
   const user = c.get("user-google");
 
-  return c.json({
-    token,
-    grantedScopes,
-    user,
+  if (!user || !token) {
+    return c.redirect(`${routes.public.login}?error=google_auth_failed`);
+  }
+
+  // In a real app, you'd store this in a DB and create a session
+  // For now, we'll set a simple cookie with the user info
+  const sessionData = sessionDataSchema.parse({
+    user: {
+      name: user.name || user.email,
+      avatar: user.picture,
+      email: user.email,
+      login: user.email,
+      provider: "google",
+    },
+    token: token.token,
   });
+
+  setCookie(c, SESSION_COOKIE_NAME, JSON.stringify(sessionData), {
+    path: SESSION_COOKIE_PATH,
+    secure: import.meta.env.PROD,
+    httpOnly: import.meta.env.PROD,
+    maxAge: MAX_SESSION_AGE, // 7 days
+    sameSite: "Lax",
+  });
+
+  return c.redirect(routes.private.dashboard);
 });
 
 auth.get("/logout", (c) => {
