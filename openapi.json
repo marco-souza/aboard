@@ -31,7 +31,7 @@
         }
       }
     },
-    "/api/docs": {
+    "/api/openapi": {
       "get": {
         "responses": {
           "200": {
