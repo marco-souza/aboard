@@ -1,17 +1,16 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
-import { config } from "~/config";
+import { Hono } from "hono";
 import { auth } from "./auth";
-import { configureDocs } from "./docs";
 import { health } from "./health";
 import { posts } from "./posts";
 
-export const app = new OpenAPIHono()
+const routes = new Hono()
   .basePath("/api/")
   // add routers
   .route("/posts", posts)
   .route("/auth", auth)
   .route("/healthcheck", health);
 
-if (config.NODE_ENV !== "production") {
-  configureDocs(app);
-}
+// Export the type for Hono RPC client
+export type AppType = typeof routes;
+
+export const app = routes;

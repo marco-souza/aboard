@@ -1,7 +1,7 @@
-import { defineMiddleware, sequence } from "astro:middleware";
-import { sessionDataSchema } from "~/domain/user/schema";
 import { SESSION_COOKIE_NAME } from "~/domain/user/constants";
+import { sessionDataSchema } from "~/domain/user/schema";
 import { isPrivateRoute, routes } from "~/server/contants";
+import { defineMiddleware, sequence } from "astro:middleware";
 
 // Define a simple logging middleware
 const loggingMiddleware = defineMiddleware(async (context, next) => {

@@ -7,10 +7,6 @@ export const routes = {
     login: "/login",
     logout: "/api/auth/logout",
   },
-  api: {
-    openapi: "/api/openapi",
-    scalar: "/api/openapi/ui",
-  },
 } as const;
 
 export const isPrivateRoute = (path: string) => {

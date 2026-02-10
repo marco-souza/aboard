@@ -1,4 +1,4 @@
-import { z } from "@hono/zod-openapi";
+import { z } from "zod";
 
 const AppConfigSchema = z.object({
   BASE_URL: z.url(),

@@ -4,25 +4,28 @@
 
 - **Dev**: `bun run dev` (localhost:4321)
 - **Build**: `bun run build` → `dist/`
-- **Lint**: `bun run lint` (format + fix) or `bun run lint:fix` (check)
+- **Lint**: `bun run lint` (check) or `bun run fix` (auto-fix + format)
 - **Test**: `bun run test` (Vitest with globals, node env)
 - **Single test**: `bun run test -- path/to/file.test.ts` or `bun run test --
 --grep "test name"`
 - **Test UI**: `bun run test:ui`
-- **API client**: `bun run gen:api-client` (generates from OpenAPI)
+- **API client**: Hono RPC via `hc` (`src/lib/api-client.ts`), type-safe with no
+  codegen
 
 ## Architecture & Structure
 
 - **Framework**: Astro 5 + SolidJS + Tailwind CSS (DaisyUI)
-- **Backend**: Hono.js (REST API) with Zod schemas, deployed to Cloudflare
-  Workers
+- **Backend**: Hono.js (REST API), deployed to Cloudflare Workers
 - **Frontend**: Astro pages + SolidJS components, static generation
 - **src/**: `pages/` (routes), `components/`, `layouts/`, `server/` (Hono API
   handlers), `stores/`, `lib/`, `config/`, `assets/`, `styles/`
 - **API routes**: `src/server/router.ts` (Hono app), health.ts, auth.ts (OAuth),
-  posts.ts (boards/tasks)
+  posts.ts (boards/tasks). Router exports `AppType` for the Hono RPC client.
+- **API client**: `src/lib/api-client.ts` uses `hc` from `hono/client` with the
+  `hcWithType` pattern for pre-compiled types and better IDE performance
 - **DB**: Managed via Cloudflare D1
 - **Auth**: OAuth providers via @hono/oauth-providers
+- **Validation**: Zod for config, domain schemas, and request validation
 - **Path alias**: `~/` maps to `./src/`
 
 ## Code Style & Conventions
@@ -37,6 +40,9 @@
 - **CSS**: Tailwind directives enabled, use utility classes + DaisyUI
 - **Error handling**: Use Zod for validation, consistent error responses
 - **Imports**: Organize by groups (packages, then aliases), prefer named exports
+- **Hono routes**: Always chain handlers (`.get().post()`) instead of separate
+  calls — required for Hono RPC type inference. Export `typeof routes` from
+  the router so the `hc` client can infer all endpoint types.
 
 ## Domain Layer Patterns
 
