@@ -3,4 +3,5 @@ import { UserService } from "./service";
 
 describe("validate service was created", () => {
   expect(UserService).not.toBeNull();
+  expect(UserService.userSchema).not.toBeNull();
 });

@@ -1,3 +1,5 @@
 import { userSchema } from "./schema";
 
-export const UserService = {};
+export const UserService = {
+  userSchema,
+};
