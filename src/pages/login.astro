@@ -1,8 +1,10 @@
 ---
-import { routes } from "~/config/routes";
+import { routes } from "~/server/contants";
 import GitHubButton from "~/components/GitHubButton";
 import GoogleButton from "~/components/GoogleButton";
 import Layout from "~/layouts/Layout.astro";
+
+export const prerender = false;
 ---
 
 <Layout title="Sign In - Aboard" showNavbar={false}>

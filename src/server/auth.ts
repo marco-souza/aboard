@@ -1,9 +1,16 @@
 import { githubAuth } from "@hono/oauth-providers/github";
 import { googleAuth } from "@hono/oauth-providers/google";
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { setCookie } from "hono/cookie";
+import { deleteCookie, setCookie } from "hono/cookie";
 import { config } from "~/config";
-import { routes } from "~/config/routes";
+import {
+  MAX_SESSION_AGE,
+  SESSION_COOKIE_NAME,
+  SESSION_COOKIE_PATH,
+} from "~/domain/user/constants";
+
+import { routes } from "./contants";
+import { sessionDataSchema } from "~/domain/user/schema";
 
 export const auth = new OpenAPIHono();
 
@@ -27,20 +34,22 @@ auth.get("/github", (c) => {
 
   // In a real app, you'd store this in a DB and create a session
   // For now, we'll set a simple cookie with the user info
-  const sessionData = {
+  const sessionData = sessionDataSchema.parse({
     user: {
       name: user.name || user.login,
       avatar: user.avatar_url,
       email: user.email,
+      login: user.login,
+      provider: "github",
     },
     token: token.token,
-  };
+  });
 
-  setCookie(c, "aboard_session", JSON.stringify(sessionData), {
-    path: "/",
+  setCookie(c, SESSION_COOKIE_NAME, JSON.stringify(sessionData), {
+    path: SESSION_COOKIE_PATH,
     secure: import.meta.env.PROD,
-    httpOnly: true,
-    maxAge: 60 * 60 * 24 * 7, // 7 days
+    httpOnly: import.meta.env.PROD,
+    maxAge: MAX_SESSION_AGE, // 7 days
     sameSite: "Lax",
   });
 
@@ -68,12 +77,12 @@ auth.get("/google", (c) => {
   });
 });
 
-auth.post("/logout", (c) => {
-  setCookie(c, "aboard_session", "", {
-    path: "/",
-    secure: import.meta.env.PROD,
-    httpOnly: true,
+auth.get("/logout", (c) => {
+  deleteCookie(c, SESSION_COOKIE_NAME, {
+    path: SESSION_COOKIE_PATH,
     maxAge: 0,
+    secure: import.meta.env.PROD,
+    httpOnly: import.meta.env.PROD,
     sameSite: "Lax",
   });
 

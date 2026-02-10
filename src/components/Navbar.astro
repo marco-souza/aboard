@@ -1,5 +1,5 @@
 ---
-import { routes } from "~/config/routes";
+import { routes } from "~/server/contants";
 
 interface Props {
   boardName?: string;
@@ -44,7 +44,7 @@ const { boardName = "Playground" } = Astro.props;
 
       <ul class="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
         <li><a href="#">Profile</a></li>
-        <li><a href={routes.private.logout}>Logout</a></li>
+        <li><a href={routes.public.logout}>Logout</a></li>
       </ul>
     </details>
   </div>
