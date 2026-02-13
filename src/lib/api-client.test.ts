@@ -4,8 +4,8 @@ import { describe, expect, it } from "vitest";
 import { health } from "~/server/health";
 import { users } from "~/server/users";
 
-// Build a test app with the same route structure as the real router
-// (avoids importing router.ts which triggers env config validation)
+// Build a test app without auth route — importing router.ts pulls in auth.ts
+// which accesses OAuth config (~/config) at module level, failing in tests.
 const app = new Hono()
   .basePath("/api/")
   .route("/users", users)

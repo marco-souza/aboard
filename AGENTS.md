@@ -21,9 +21,12 @@
   handlers), `stores/`, `lib/`, `config/`, `assets/`, `styles/`
 - **API routes**: `src/server/router.ts` (Hono app), health.ts, auth.ts (OAuth),
   users.ts. Router exports `AppType` for the Hono RPC client.
-- **Domain**: `src/domain/` organized by feature (`user/`, etc.) plus `shared/`
-  for cross-cutting schemas (e.g., `pagination.ts`). Compose shared schemas via
-  `.extend()` with domain-specific fields.
+- **Domain**: `src/domain/` organized by feature (`user/`, `auth/`) plus
+  `shared/` for cross-cutting schemas (`pagination.ts`, `provider.ts`). Compose
+  shared schemas with domain-specific ones via `.extend()`.
+  - `domain/shared/` — reusable schemas (pagination, provider enum)
+  - `domain/auth/` — session schemas, session constants (cookie config)
+  - `domain/user/` — user entity, CRUD DTOs, user service
 - **API client**: `src/lib/api-client.ts` uses `hc` from `hono/client` with the
   `hcWithType` pattern for pre-compiled types and better IDE performance
 - **DB**: Managed via Cloudflare D1

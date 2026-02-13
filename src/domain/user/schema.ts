@@ -1,9 +1,7 @@
 import { z } from "zod";
 
 import { paginationSchema } from "~/domain/shared/pagination";
-
-export const providerEnum = z.enum(["github", "google"]);
-export type Provider = z.infer<typeof providerEnum>;
+import { providerEnum } from "~/domain/shared/provider";
 
 export const userSchema = z.strictObject({
   id: z.uuid(),
@@ -14,17 +12,6 @@ export const userSchema = z.strictObject({
   avatar: z.url(),
 });
 export type User = z.infer<typeof userSchema>;
-
-export const userSessionSchema = userSchema.omit({
-  id: true,
-});
-export type UserSession = z.infer<typeof userSessionSchema>;
-
-export const sessionDataSchema = z.strictObject({
-  user: userSessionSchema,
-  token: z.string(),
-});
-export type SessionData = z.infer<typeof sessionDataSchema>;
 
 // API DTOs
 

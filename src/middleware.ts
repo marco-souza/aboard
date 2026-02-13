@@ -1,5 +1,5 @@
-import { SESSION_COOKIE_NAME } from "~/domain/user/constants";
-import { sessionDataSchema } from "~/domain/user/schema";
+import { SESSION_COOKIE_NAME } from "~/domain/auth/constants";
+import { sessionDataSchema } from "~/domain/auth/schema";
 import { isPrivateRoute, routes } from "~/server/contants";
 import { defineMiddleware, sequence } from "astro:middleware";
 

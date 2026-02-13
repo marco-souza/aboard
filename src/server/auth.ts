@@ -7,8 +7,8 @@ import {
   MAX_SESSION_AGE,
   SESSION_COOKIE_NAME,
   SESSION_COOKIE_PATH,
-} from "~/domain/user/constants";
-import { sessionDataSchema } from "~/domain/user/schema";
+} from "~/domain/auth/constants";
+import { sessionDataSchema } from "~/domain/auth/schema";
 import { routes } from "./contants";
 
 export const auth = new Hono()
