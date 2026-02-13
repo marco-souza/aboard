@@ -1,12 +1,12 @@
 import { Hono } from "hono";
 import { auth } from "./auth";
 import { health } from "./health";
-import { posts } from "./posts";
+import { users } from "./users";
 
 const routes = new Hono()
   .basePath("/api/")
   // add routers
-  .route("/posts", posts)
+  .route("/users", users)
   .route("/auth", auth)
   .route("/healthcheck", health);
 

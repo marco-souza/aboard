@@ -20,7 +20,10 @@
 - **src/**: `pages/` (routes), `components/`, `layouts/`, `server/` (Hono API
   handlers), `stores/`, `lib/`, `config/`, `assets/`, `styles/`
 - **API routes**: `src/server/router.ts` (Hono app), health.ts, auth.ts (OAuth),
-  posts.ts (boards/tasks). Router exports `AppType` for the Hono RPC client.
+  users.ts. Router exports `AppType` for the Hono RPC client.
+- **Domain**: `src/domain/` organized by feature (`user/`, etc.) plus `shared/`
+  for cross-cutting schemas (e.g., `pagination.ts`). Compose shared schemas via
+  `.extend()` with domain-specific fields.
 - **API client**: `src/lib/api-client.ts` uses `hc` from `hono/client` with the
   `hcWithType` pattern for pre-compiled types and better IDE performance
 - **DB**: Managed via Cloudflare D1
@@ -53,6 +56,8 @@ When building domain-specific features (e.g., Kanban boards):
   - Include business rule refinements in schemas
   - No barrel files (`index.ts`) in domain layer - import directly from files
     (avoids circular deps)
+  - Place reusable schemas (pagination, sorting, etc.) in `domain/shared/`
+  - Compose shared schemas with domain-specific ones via `.extend()`
 - **Services**: Pure domain functions with no side effects
   - Testable in isolation, no mocking needed
   - Take domain objects as inputs, return modified copies (immutable)
