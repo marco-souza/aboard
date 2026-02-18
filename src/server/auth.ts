@@ -4,11 +4,11 @@ import { Hono } from "hono";
 import { deleteCookie, setCookie } from "hono/cookie";
 import { config } from "~/config";
 import { SESSION_COOKIE_NAME } from "~/domain/auth/constants";
+import { sessionDataSchema } from "~/domain/auth/schema";
 import {
   extractOAuthUser,
   getSessionCookieConfig,
 } from "~/domain/auth/service";
-import { sessionDataSchema } from "~/domain/auth/schema";
 import { routes } from "./contants";
 
 export const auth = new Hono()

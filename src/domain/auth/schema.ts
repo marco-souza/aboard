@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 import { providerEnum } from "~/domain/shared/provider";
 
 export const userSessionSchema = z.strictObject({

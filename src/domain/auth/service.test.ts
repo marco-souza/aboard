@@ -1,10 +1,9 @@
-import { describe, it, expect } from "vitest";
-
+import { describe, expect, it } from "vitest";
+import { MAX_SESSION_AGE, SESSION_COOKIE_NAME } from "~/domain/auth/constants";
 import {
   extractOAuthUser,
   getSessionCookieConfig,
 } from "~/domain/auth/service";
-import { SESSION_COOKIE_NAME, MAX_SESSION_AGE } from "~/domain/auth/constants";
 
 describe("Auth Service", () => {
   describe("extractOAuthUser", () => {

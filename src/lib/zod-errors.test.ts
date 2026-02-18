@@ -1,6 +1,5 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { z } from "zod";
-
 import { createErrorSummary } from "~/lib/zod-errors";
 
 describe("Zod Error Utilities", () => {
