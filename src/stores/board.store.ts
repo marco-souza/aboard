@@ -1,5 +1,4 @@
 import { createMemo, createSignal } from "solid-js";
-
 import { DEFAULT_LANE_INDEX, DEFAULT_LANES } from "~/domain/board/constants";
 import type { Board } from "~/domain/board/schema";
 import { BoardService } from "~/domain/board/service";

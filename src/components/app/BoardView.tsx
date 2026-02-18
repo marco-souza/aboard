@@ -1,5 +1,4 @@
-import { For, Show, createSignal } from "solid-js";
-
+import { createSignal, For, Show } from "solid-js";
 import type { Card, Lane } from "~/domain/board/schema";
 import { type BoardStore, useBoardStore } from "~/stores/board.store";
 

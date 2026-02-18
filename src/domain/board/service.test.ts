@@ -1,12 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
-
+import { DEFAULT_LANES } from "./constants";
 import {
   buildBoard,
   buildCard,
   buildLane,
   resetFixtureCounter,
 } from "./fixtures";
-import { DEFAULT_LANES } from "./constants";
 import { BoardService } from "./service";
 
 afterEach(resetFixtureCounter);
