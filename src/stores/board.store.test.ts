@@ -8,11 +8,10 @@ describe("useBoardStore", () => {
   describe("initialization", () => {
     it("starts with default lanes and no cards", () => {
       const { result } = renderHook(() => useBoardStore("My Board"));
-      const board = result.board();
 
-      expect(board.title).toBe("My Board");
-      expect(board.lanes).toHaveLength(3);
-      expect(board.cards).toEqual([]);
+      expect(result.board.title).toBe("My Board");
+      expect(result.board.lanes).toHaveLength(3);
+      expect(result.board.cards).toEqual([]);
     });
 
     it("exposes default lanes sorted by position", () => {
