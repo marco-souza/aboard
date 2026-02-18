@@ -1,6 +1,5 @@
 import { cleanup, renderHook } from "solid-testing-library";
 import { afterEach, describe, expect, it } from "vitest";
-
 import { DEFAULT_LANE_TITLES, useBoardStore } from "./board.store";
 
 afterEach(cleanup);
