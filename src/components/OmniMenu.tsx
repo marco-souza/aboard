@@ -13,7 +13,14 @@ function Header() {
 function SearchBar(
   props: Pick<
     OmniMenuState,
-    "search" | "setSearch" | "setSearchRef" | "toggle"
+    | "search"
+    | "setSearch"
+    | "setSearchRef"
+    | "toggle"
+    | "moveDown"
+    | "moveUp"
+    | "resetSelection"
+    | "confirmSelection"
   >,
 ) {
   return (
@@ -40,9 +47,33 @@ function SearchBar(
           class="grow"
           placeholder="Search commands..."
           value={props.search()}
-          onInput={(e) => props.setSearch(e.currentTarget.value)}
+          onInput={(e) => {
+            props.setSearch(e.currentTarget.value);
+            props.resetSelection();
+          }}
           onKeyDown={(e) => {
-            if (e.key === "Escape") props.toggle();
+            if (e.key === "Escape") {
+              if (props.search()) {
+                e.preventDefault();
+                e.stopPropagation();
+                props.setSearch("");
+                props.resetSelection();
+              } else {
+                props.toggle();
+              }
+            }
+            if (e.key === "ArrowDown") {
+              e.preventDefault();
+              props.moveDown();
+            }
+            if (e.key === "ArrowUp") {
+              e.preventDefault();
+              props.moveUp();
+            }
+            if (e.key === "Enter") {
+              e.preventDefault();
+              props.confirmSelection();
+            }
           }}
         />
       </label>
@@ -53,54 +84,76 @@ function SearchBar(
 function Sections(
   props: Pick<
     OmniMenuState,
-    "filteredSections" | "isExpanded" | "toggleSection"
+    "filteredSections" | "isExpanded" | "toggleSection" | "selectedEntry"
   >,
 ) {
   return (
     <ul class="menu w-full flex-row px-2 pb-4 max-h-72 overflow-y-auto">
       <For each={props.filteredSections().sections}>
-        {(section) => (
-          <li class="w-full">
-            <button
-              type="button"
-              class="flex items-center justify-between font-semibold w-full"
-              onClick={() => props.toggleSection(section.key)}
-            >
-              <span>
-                {section.icon} {section.label}
-              </span>
-
-              <svg
-                class="h-4 w-4 transition-transform"
-                classList={{
-                  "rotate-180": props.isExpanded(section.key),
-                }}
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+        {(section) => {
+          const sectionSelected = () => {
+            const sel = props.selectedEntry();
+            return sel?.type === "section" && sel.section === section.key;
+          };
+          return (
+            <li class="w-full">
+              <button
+                type="button"
+                class="flex items-center justify-between font-semibold w-full"
+                classList={{ "menu-focus": sectionSelected() }}
+                onClick={() => props.toggleSection(section.key)}
               >
-                <title>Toggle section</title>
-                <path d="m6 9 6 6 6-6" />
-              </svg>
-            </button>
+                <span>
+                  {section.icon} {section.label}
+                </span>
 
-            {props.isExpanded(section.key) && (
-              <ul>
-                <For each={section.items}>
-                  {(item) => (
-                    <li>
-                      <button type="button">{item}</button>
-                    </li>
-                  )}
-                </For>
-              </ul>
-            )}
-          </li>
-        )}
+                <svg
+                  class="h-4 w-4 transition-transform"
+                  classList={{
+                    "rotate-180": props.isExpanded(section.key),
+                  }}
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <title>Toggle section</title>
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </button>
+
+              {props.isExpanded(section.key) && (
+                <ul>
+                  <For each={section.items}>
+                    {(item) => {
+                      const selected = () => {
+                        const sel = props.selectedEntry();
+                        return (
+                          sel?.type === "item" &&
+                          sel.section === section.key &&
+                          sel.item === item
+                        );
+                      };
+                      return (
+                        <li>
+                          <button
+                            type="button"
+                            classList={{ "menu-focus": selected() }}
+                          >
+                            {item}
+                          </button>
+                        </li>
+                      );
+                    }}
+                  </For>
+                </ul>
+              )}
+            </li>
+          );
+        }}
       </For>
 
       {props.filteredSections().sections.length === 0 && (
@@ -111,7 +164,12 @@ function Sections(
 }
 
 export default function OmniMenu() {
-  const menu = useOmniMenu();
+  const menu = useOmniMenu({
+    onSelect: (entry) => {
+      if (entry.type === "item")
+        alert(`Selected: ${entry.section} > ${entry.item}`);
+    },
+  });
 
   let dialogRef!: HTMLDialogElement;
 
@@ -159,11 +217,16 @@ export default function OmniMenu() {
             setSearch={menu.setSearch}
             setSearchRef={menu.setSearchRef}
             toggle={menu.toggle}
+            moveDown={menu.moveDown}
+            moveUp={menu.moveUp}
+            resetSelection={menu.resetSelection}
+            confirmSelection={menu.confirmSelection}
           />
           <Sections
             filteredSections={menu.filteredSections}
             isExpanded={menu.isExpanded}
             toggleSection={menu.toggleSection}
+            selectedEntry={menu.selectedEntry}
           />
         </div>
       </dialog>

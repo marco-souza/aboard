@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js";
+import { createMemo, createSignal } from "solid-js";
 
 const sections = [
   {
@@ -24,9 +24,17 @@ const sections = [
 
 type Key = (typeof sections)[number]["key"];
 
+export type OmniMenuEntry =
+  | { type: "section"; section: string }
+  | { type: "item"; section: string; item: string };
+
 export type OmniMenuState = ReturnType<typeof useOmniMenu>;
 
-export function useOmniMenu() {
+interface UseOmniMenuOptions {
+  onSelect?: (entry: OmniMenuEntry) => void;
+}
+
+export function useOmniMenu(options: UseOmniMenuOptions = {}) {
   const [open, setOpen] = createSignal(false);
   const [search, setSearch] = createSignal("");
   const [expanded, setExpanded] = createSignal<Record<Key, boolean>>({
@@ -53,15 +61,34 @@ export function useOmniMenu() {
     } else {
       dialogRef.showModal();
       setOpen(true);
+      updateSearch("");
+      resetSelection();
       searchRef?.focus();
     }
   }
 
-  function toggleSection(key: string) {
-    setExpanded((prev) => ({ ...prev, [key]: !prev[key as Key] }));
+  const [searchCollapsed, setSearchCollapsed] = createSignal(new Set<string>());
+
+  function updateSearch(value: string) {
+    setSearch(value);
+    setSearchCollapsed(new Set());
   }
 
-  const filteredSections = () => {
+  function toggleSection(key: string) {
+    const { matchedKeys } = filteredSections();
+    if (matchedKeys.size > 0) {
+      setSearchCollapsed((prev) => {
+        const next = new Set(prev);
+        if (next.has(key)) next.delete(key);
+        else next.add(key);
+        return next;
+      });
+    } else {
+      setExpanded((prev) => ({ ...prev, [key]: !prev[key as Key] }));
+    }
+  }
+
+  const filteredSections = createMemo(() => {
     const q = search().toLowerCase();
     if (!q) return { sections, matchedKeys: new Set<string>() };
 
@@ -76,23 +103,84 @@ export function useOmniMenu() {
       sections: matched,
       matchedKeys: new Set(matched.map((s) => s.key)),
     };
-  };
+  });
 
   const isExpanded = (key: string) => {
     const { matchedKeys } = filteredSections();
-    if (matchedKeys.size > 0) return matchedKeys.has(key as Key);
+    if (matchedKeys.size > 0) {
+      return matchedKeys.has(key as Key) && !searchCollapsed().has(key);
+    }
     return !!expanded()[key as Key];
   };
+
+  const visibleEntries = createMemo<OmniMenuEntry[]>(() => {
+    const result: OmniMenuEntry[] = [];
+    for (const section of filteredSections().sections) {
+      result.push({ type: "section", section: section.key });
+      if (!isExpanded(section.key)) continue;
+      for (const item of section.items) {
+        result.push({ type: "item", section: section.key, item });
+      }
+    }
+    return result;
+  });
+
+  const [selectedIndex, setSelectedIndex] = createSignal(-1);
+
+  function moveDown() {
+    const entries = visibleEntries();
+    if (entries.length === 0) return;
+    setSelectedIndex((i) => (i + 1) % entries.length);
+  }
+
+  function moveUp() {
+    const entries = visibleEntries();
+    if (entries.length === 0) return;
+    setSelectedIndex((i) => (i <= 0 ? entries.length - 1 : i - 1));
+  }
+
+  function resetSelection() {
+    setSelectedIndex(-1);
+  }
+
+  const selectedEntry = () => {
+    const entries = visibleEntries();
+    const idx = selectedIndex();
+    return idx >= 0 && idx < entries.length ? entries[idx] : null;
+  };
+
+  function confirmSelection() {
+    const entry = selectedEntry();
+    if (!entry) return;
+    if (entry.type === "section") {
+      toggleSection(entry.section);
+      return;
+    }
+    options.onSelect?.(entry);
+    if (search()) {
+      updateSearch("");
+      resetSelection();
+    } else {
+      toggle();
+    }
+  }
 
   return {
     open,
     search,
-    setSearch,
+    setSearch: updateSearch,
     toggle,
     toggleSection,
     filteredSections,
     isExpanded,
     setDialogRef,
     setSearchRef,
+    selectedIndex,
+    selectedEntry,
+    visibleEntries,
+    moveDown,
+    moveUp,
+    resetSelection,
+    confirmSelection,
   };
 }
