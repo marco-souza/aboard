@@ -1,65 +1,63 @@
 import { cleanup, renderHook } from "solid-testing-library";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { useBoardStore } from "./board.store";
+import { DEFAULT_LANE_TITLES, useBoardStore } from "./board.store";
 
 afterEach(cleanup);
 
 describe("useBoardStore", () => {
   describe("initialization", () => {
-    it("starts with an empty board", () => {
+    it("starts with default lanes and no cards", () => {
       const { result } = renderHook(() => useBoardStore("My Board"));
       const board = result.board();
 
       expect(board.title).toBe("My Board");
-      expect(board.lanes).toEqual([]);
+      expect(board.lanes).toHaveLength(3);
       expect(board.cards).toEqual([]);
     });
 
-    it("exposes empty lanes accessor", () => {
+    it("exposes default lanes sorted by position", () => {
       const { result } = renderHook(() => useBoardStore("My Board"));
-      expect(result.lanes()).toEqual([]);
+      const titles = result.lanes().map((l) => l.title);
+      expect(titles).toEqual([...DEFAULT_LANE_TITLES]);
+    });
+
+    it("exposes the default lane id (Maybe)", () => {
+      const { result } = renderHook(() => useBoardStore("My Board"));
+      const maybeLane = result.lanes().find((l) => l.title === "Maybe");
+      expect(result.defaultLaneId()).toBe(maybeLane?.id);
     });
   });
 
   describe("lane management", () => {
-    it("adds a lane", () => {
+    it("adds a lane after the defaults", () => {
       const { result } = renderHook(() => useBoardStore("Board"));
 
-      result.addLane("To Do");
+      result.addLane("Blocked");
 
-      expect(result.lanes()).toHaveLength(1);
-      expect(result.lanes()[0].title).toBe("To Do");
-    });
-
-    it("adds multiple lanes in order", () => {
-      const { result } = renderHook(() => useBoardStore("Board"));
-
-      result.addLane("To Do");
-      result.addLane("In Progress");
-      result.addLane("Done");
-
-      const titles = result.lanes().map((l) => l.title);
-      expect(titles).toEqual(["To Do", "In Progress", "Done"]);
+      expect(result.lanes()).toHaveLength(4);
+      expect(result.lanes()[3].title).toBe("Blocked");
     });
 
     it("removes a lane", () => {
       const { result } = renderHook(() => useBoardStore("Board"));
 
-      result.addLane("To Do");
-      const laneId = result.lanes()[0].id;
-      result.removeLane(laneId);
+      result.addLane("Blocked");
+      const blockedId = result.lanes().find((l) => l.title === "Blocked")?.id;
+      result.removeLane(blockedId);
 
-      expect(result.lanes()).toHaveLength(0);
+      expect(result.lanes()).toHaveLength(3);
+      expect(result.lanes().map((l) => l.title)).toEqual([
+        ...DEFAULT_LANE_TITLES,
+      ]);
     });
   });
 
   describe("card management", () => {
-    it("adds a card to a lane", () => {
+    it("adds a card to the default lane", () => {
       const { result } = renderHook(() => useBoardStore("Board"));
 
-      result.addLane("To Do");
-      const laneId = result.lanes()[0].id;
+      const laneId = result.defaultLaneId();
       result.addCard(laneId, "First task");
 
       const cards = result.cardsInLane(laneId);
@@ -70,8 +68,7 @@ describe("useBoardStore", () => {
     it("returns cards sorted by position", () => {
       const { result } = renderHook(() => useBoardStore("Board"));
 
-      result.addLane("To Do");
-      const laneId = result.lanes()[0].id;
+      const laneId = result.defaultLaneId();
       result.addCard(laneId, "First");
       result.addCard(laneId, "Second");
       result.addCard(laneId, "Third");
@@ -83,8 +80,7 @@ describe("useBoardStore", () => {
     it("removes a card", () => {
       const { result } = renderHook(() => useBoardStore("Board"));
 
-      result.addLane("To Do");
-      const laneId = result.lanes()[0].id;
+      const laneId = result.defaultLaneId();
       result.addCard(laneId, "Task");
       const cardId = result.cardsInLane(laneId)[0].id;
       result.removeCard(cardId);
@@ -95,17 +91,15 @@ describe("useBoardStore", () => {
     it("cardsInLane only returns cards for the given lane", () => {
       const { result } = renderHook(() => useBoardStore("Board"));
 
-      result.addLane("To Do");
-      result.addLane("Done");
-      const [todo, done] = result.lanes();
+      const [notNow, maybe] = result.lanes();
 
-      result.addCard(todo.id, "Task A");
-      result.addCard(done.id, "Task B");
+      result.addCard(notNow.id, "Task A");
+      result.addCard(maybe.id, "Task B");
 
-      expect(result.cardsInLane(todo.id)).toHaveLength(1);
-      expect(result.cardsInLane(todo.id)[0].title).toBe("Task A");
-      expect(result.cardsInLane(done.id)).toHaveLength(1);
-      expect(result.cardsInLane(done.id)[0].title).toBe("Task B");
+      expect(result.cardsInLane(notNow.id)).toHaveLength(1);
+      expect(result.cardsInLane(notNow.id)[0].title).toBe("Task A");
+      expect(result.cardsInLane(maybe.id)).toHaveLength(1);
+      expect(result.cardsInLane(maybe.id)[0].title).toBe("Task B");
     });
   });
 
@@ -113,16 +107,14 @@ describe("useBoardStore", () => {
     it("moves a card between lanes", () => {
       const { result } = renderHook(() => useBoardStore("Board"));
 
-      result.addLane("To Do");
-      result.addLane("Done");
-      const [todo, done] = result.lanes();
+      const [_notNow, maybe, done] = result.lanes();
 
-      result.addCard(todo.id, "Task");
-      const cardId = result.cardsInLane(todo.id)[0].id;
+      result.addCard(maybe.id, "Task");
+      const cardId = result.cardsInLane(maybe.id)[0].id;
 
       result.moveCard(cardId, done.id, 0);
 
-      expect(result.cardsInLane(todo.id)).toHaveLength(0);
+      expect(result.cardsInLane(maybe.id)).toHaveLength(0);
       expect(result.cardsInLane(done.id)).toHaveLength(1);
       expect(result.cardsInLane(done.id)[0].title).toBe("Task");
     });
@@ -130,8 +122,7 @@ describe("useBoardStore", () => {
     it("reorders a card within the same lane", () => {
       const { result } = renderHook(() => useBoardStore("Board"));
 
-      result.addLane("To Do");
-      const laneId = result.lanes()[0].id;
+      const laneId = result.defaultLaneId();
       result.addCard(laneId, "A");
       result.addCard(laneId, "B");
       result.addCard(laneId, "C");

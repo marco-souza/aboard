@@ -1,3 +1,4 @@
+import { DEFAULT_LANES } from "./constants";
 import type { Board, Card } from "./schema";
 
 function uuid(): string {
@@ -18,7 +19,12 @@ function cardsInLane(cards: Card[], laneId: string): Card[] {
 
 export const BoardService = {
   createBoard(title: string): Board {
-    return { id: uuid(), title, lanes: [], cards: [] };
+    const lanes = DEFAULT_LANES.map((name, i) => ({
+      id: uuid(),
+      title: name,
+      position: i,
+    }));
+    return { id: uuid(), title, lanes, cards: [] };
   },
 
   addLane(board: Board, title: string): Board {
@@ -65,7 +71,16 @@ export const BoardService = {
     }
 
     const position = cardsInLane(board.cards, laneId).length;
-    const card: Card = { id: uuid(), title, laneId, position, description };
+    const now = new Date().toISOString();
+    const card: Card = {
+      id: uuid(),
+      title,
+      laneId,
+      position,
+      description,
+      createdAt: now,
+      updatedAt: now,
+    };
 
     return { ...board, cards: [...board.cards, card] };
   },
@@ -115,6 +130,7 @@ export const BoardService = {
       ...card,
       laneId: targetLaneId,
       position: 0,
+      updatedAt: new Date().toISOString(),
     });
     const reorderedTarget = assignPositions(targetCards);
 

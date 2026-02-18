@@ -7,12 +7,22 @@ export const laneSchema = z.strictObject({
 });
 export type Lane = z.infer<typeof laneSchema>;
 
+export const cardAssigneeSchema = z.strictObject({
+  id: z.uuid(),
+  name: z.string().min(1),
+  avatar: z.url(),
+});
+export type CardAssignee = z.infer<typeof cardAssigneeSchema>;
+
 export const cardSchema = z.strictObject({
   id: z.uuid(),
   title: z.string().min(1),
   description: z.string().optional(),
   laneId: z.uuid(),
   position: z.int().nonnegative(),
+  assignee: cardAssigneeSchema.optional(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 });
 export type Card = z.infer<typeof cardSchema>;
 

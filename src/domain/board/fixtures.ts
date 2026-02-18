@@ -21,11 +21,14 @@ export function buildLane(overrides: Partial<Lane> = {}): Lane {
 }
 
 export function buildCard(overrides: Partial<Card> = {}): Card {
+  const now = new Date().toISOString();
   return {
     id: nextUuid(),
     title: "Card",
     laneId: "00000000-0000-4000-8000-000000000000",
     position: 0,
+    createdAt: now,
+    updatedAt: now,
     ...overrides,
   };
 }

@@ -1,5 +1,5 @@
 ---
-import Board from "~/components/app/Board.astro";
+import BoardView from "~/components/app/BoardView";
 import Layout from "~/layouts/Layout.astro";
 
 export const prerender = false;
@@ -8,7 +8,7 @@ export const prerender = false;
 <Layout title="Playground">
   <div class="h-screen flex flex-col overflow-hidden bg-base-100">
     <main class="flex-1 overflow-hidden relative">
-      <Board />
+      <BoardView client:load title="Playground" />
     </main>
   </div>
 </Layout>
