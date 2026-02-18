@@ -1,33 +1,20 @@
-import { createSignal, For, Show } from "solid-js";
+import { For, Show } from "solid-js";
+
 import type { Card, Lane } from "~/domain/board/schema";
-import { type BoardStore, useBoardStore } from "~/stores/board.store";
 
-const MAX_VISIBLE_AVATARS = 7;
+import {
+  type BoardViewState,
+  type CardCreationState,
+  formatDate,
+  useCardCreation,
+  useBoardView,
+} from "./BoardView.hooks";
 
-const MOCK_WATCHERS = [
-  { initials: "JS", color: "bg-primary" },
-  { initials: "AL", color: "bg-secondary" },
-  { initials: "MK", color: "bg-accent" },
-  { initials: "RD", color: "bg-info" },
-  { initials: "TP", color: "bg-success" },
-  { initials: "LN", color: "bg-warning" },
-  { initials: "CB", color: "bg-error" },
-  { initials: "FG", color: "bg-primary" },
-  { initials: "HJ", color: "bg-secondary" },
-  { initials: "WX", color: "bg-accent" },
-  { initials: "YZ", color: "bg-info" },
-  { initials: "QR", color: "bg-success" },
-  { initials: "ST", color: "bg-warning" },
-  { initials: "UV", color: "bg-error" },
-  { initials: "KL", color: "bg-primary" },
-  { initials: "MN", color: "bg-secondary" },
-  { initials: "OP", color: "bg-accent" },
-];
-
-function LaneControlCard(props: { onCreateCard: () => void }) {
-  const visible = MOCK_WATCHERS.slice(0, MAX_VISIBLE_AVATARS);
-  const hiddenCount = MOCK_WATCHERS.length - MAX_VISIBLE_AVATARS;
-
+function LaneControlCard(props: {
+  onCreateCard: () => void;
+  visibleWatchers: BoardViewState["visibleWatchers"];
+  hiddenWatcherCount: number;
+}) {
   return (
     <div class="card card-compact bg-base-200 border border-base-300 shadow-sm">
       <div class="card-body gap-4">
@@ -48,20 +35,22 @@ function LaneControlCard(props: { onCreateCard: () => void }) {
           </p>
           <div class="divider my-0" />
           <div class="flex justify-center -space-x-2">
-            <For each={visible}>
+            <For each={[...props.visibleWatchers]}>
               {(watcher) => (
                 <div
-                  class={`avatar placeholder ${watcher.color} w-8 h-8 rounded-full ring-2 ring-base-200 flex items-center justify-center`}
+                  class={`avatar placeholder ${watcher.bg} w-8 h-8 rounded-full ring-2 ring-base-200 flex items-center justify-center`}
                 >
-                  <span class="text-[10px] text-white font-bold">
+                  <span class={`text-[10px] font-bold ${watcher.text}`}>
                     {watcher.initials}
                   </span>
                 </div>
               )}
             </For>
-            <Show when={hiddenCount > 0}>
+            <Show when={props.hiddenWatcherCount > 0}>
               <div class="avatar placeholder bg-base-300 w-8 h-8 rounded-full ring-2 ring-base-200 flex items-center justify-center">
-                <span class="text-[10px] font-bold">+{hiddenCount}</span>
+                <span class="text-[10px] font-bold">
+                  +{props.hiddenWatcherCount}
+                </span>
               </div>
             </Show>
           </div>
@@ -97,18 +86,49 @@ function LaneControlCard(props: { onCreateCard: () => void }) {
   );
 }
 
-function formatDate(date: Date): string {
-  return date.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+function CardCreationForm(props: { creation: CardCreationState }) {
+  const { creation } = props;
+  return (
+    <form
+      onSubmit={creation.submitCard}
+      class="card card-compact bg-base-100 border border-base-300 shadow-sm"
+    >
+      <div class="card-body gap-2">
+        <input
+          ref={creation.setInputRef}
+          type="text"
+          class="input input-bordered input-sm w-full"
+          placeholder="Card title..."
+          value={creation.newTitle()}
+          onInput={(e) => creation.setNewTitle(e.currentTarget.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") creation.cancelCreate();
+          }}
+        />
+        <div class="flex gap-2 justify-end">
+          <button
+            type="button"
+            class="btn btn-ghost btn-xs"
+            onClick={creation.cancelCreate}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary btn-xs"
+            disabled={!creation.canSubmit()}
+          >
+            Add
+          </button>
+        </div>
+      </div>
+    </form>
+  );
 }
 
 function CardItem(props: { card: Card; onRemove: (id: string) => void }) {
   return (
-    <div class="card card-compact bg-base-100 shadow-sm group">
+    <div class="card card-compact bg-base-100 border border-base-300 shadow-sm group">
       <div class="card-body gap-2">
         <div class="flex items-start justify-between gap-2">
           <h2 class="card-title text-sm">{props.card.title}</h2>
@@ -172,32 +192,9 @@ function ExpandedLane(props: {
   lane: Lane;
   cards: Card[];
   isDefault: boolean;
-  store: BoardStore;
+  view: BoardViewState;
 }) {
-  let inputRef!: HTMLInputElement;
-  const [creating, setCreating] = createSignal(false);
-  const [newTitle, setNewTitle] = createSignal("");
-
-  function startCreate() {
-    setCreating(true);
-    setNewTitle("");
-    queueMicrotask(() => inputRef?.focus());
-  }
-
-  function submitCard(e: Event) {
-    e.preventDefault();
-    const value = newTitle().trim();
-    if (!value) return;
-
-    props.store.addCard(props.lane.id, value);
-    setNewTitle("");
-    setCreating(false);
-  }
-
-  function cancelCreate() {
-    setCreating(false);
-    setNewTitle("");
-  }
+  const creation = useCardCreation(props.view.store, () => props.lane.id);
 
   return (
     <div class="h-full max-w-96 flex-1 flex flex-col">
@@ -207,48 +204,19 @@ function ExpandedLane(props: {
 
       <div class="flex flex-col gap-4 flex-1 overflow-y-auto">
         <Show when={props.isDefault}>
-          <LaneControlCard onCreateCard={startCreate} />
+          <LaneControlCard
+            onCreateCard={creation.startCreate}
+            visibleWatchers={props.view.visibleWatchers}
+            hiddenWatcherCount={props.view.hiddenWatcherCount}
+          />
 
-          <Show when={creating()}>
-            <form
-              onSubmit={submitCard}
-              class="card card-compact bg-base-100 shadow-sm"
-            >
-              <div class="card-body gap-2">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  class="input input-bordered input-sm w-full"
-                  placeholder="Card title..."
-                  value={newTitle()}
-                  onInput={(e) => setNewTitle(e.currentTarget.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Escape") cancelCreate();
-                  }}
-                />
-                <div class="flex gap-2 justify-end">
-                  <button
-                    type="button"
-                    class="btn btn-ghost btn-xs"
-                    onClick={cancelCreate}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    class="btn btn-primary btn-xs"
-                    disabled={!newTitle().trim()}
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-            </form>
+          <Show when={creation.creating()}>
+            <CardCreationForm creation={creation} />
           </Show>
         </Show>
 
         <For each={props.cards}>
-          {(card) => <CardItem card={card} onRemove={props.store.removeCard} />}
+          {(card) => <CardItem card={card} onRemove={creation.removeCard} />}
         </For>
       </div>
     </div>
@@ -258,7 +226,7 @@ function ExpandedLane(props: {
 function CollapsedLane(props: { lane: Lane; count: number }) {
   return (
     <div class="h-full flex flex-col items-center gap-4 min-w-[60px]">
-      <div class="bg-base-200 rounded-full w-10 h-10 flex items-center justify-center mb-4 text-xs font-bold shadow-inner">
+      <div class="bg-base-200 border border-base-300 rounded-full w-10 h-10 flex items-center justify-center mb-4 text-xs font-bold shadow-inner">
         {props.count}
       </div>
 
@@ -270,15 +238,15 @@ function CollapsedLane(props: { lane: Lane; count: number }) {
 }
 
 export default function BoardView(props: { title: string }) {
-  const store = useBoardStore(props.title);
+  const view = useBoardView(props.title);
 
   return (
     <div class="flex-1 w-full h-full p-4 overflow-auto">
       <div class="flex items-center justify-center gap-4 h-full max-w-7xl mx-auto">
-        <For each={store.lanes()}>
+        <For each={view.lanes()}>
           {(lane) => {
-            const cards = () => store.cardsInLane(lane.id);
-            const isDefault = () => lane.id === store.defaultLaneId();
+            const cards = () => view.laneCards(lane.id);
+            const isDefault = () => view.isDefaultLane(lane.id);
 
             return (
               <Show
@@ -289,7 +257,7 @@ export default function BoardView(props: { title: string }) {
                   lane={lane}
                   cards={cards()}
                   isDefault={isDefault()}
-                  store={store}
+                  view={view}
                 />
               </Show>
             );
