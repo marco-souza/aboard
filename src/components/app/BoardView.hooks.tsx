@@ -24,8 +24,8 @@ export const MOCK_WATCHERS = [
   { initials: "OP", bg: "bg-accent", text: "text-accent-content" },
 ] as const;
 
-export function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, {
+export function formatDate(date: Date): string {
+  return date.toLocaleDateString(undefined, {
     month: "short",
     day: "numeric",
     hour: "2-digit",

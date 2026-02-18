@@ -16,16 +16,18 @@ function LaneControlCard(props: {
   hiddenWatcherCount: number;
 }) {
   return (
-    <div class="card card-compact bg-base-200 border border-base-300 shadow-sm">
+    <div class="card bg-base-200 border border-base-300 shadow-sm">
       <div class="card-body gap-4">
         <div class="flex justify-center">
           <button
             type="button"
-            class="btn btn-primary btn-sm gap-2"
+            class="btn btn-primary rounded-full btn-sm gap-2 px-4"
             onClick={props.onCreateCard}
           >
             Create Card
-            <kbd class="kbd kbd-xs">C</kbd>
+            <kbd class="kbd kbd-xs bg-primary-content/20 text-primary-content border-primary-content/30">
+              C
+            </kbd>
           </button>
         </div>
 
@@ -126,35 +128,11 @@ function CardCreationForm(props: { creation: CardCreationState }) {
   );
 }
 
-function CardItem(props: { card: Card; onRemove: (id: string) => void }) {
+function CardItem(props: { card: Card }) {
   return (
-    <div class="card card-compact bg-base-100 border border-base-300 shadow-sm group">
+    <div class="card card-compact bg-base-100 border border-base-300 shadow-sm">
       <div class="card-body gap-2">
-        <div class="flex items-start justify-between gap-2">
-          <h2 class="card-title text-sm">{props.card.title}</h2>
-          <button
-            type="button"
-            class="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 transition-opacity"
-            onClick={() => props.onRemove(props.card.id)}
-            aria-label="Remove card"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <title>Remove</title>
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
-          </button>
-        </div>
+        <h2 class="card-title text-sm">{props.card.title}</h2>
 
         <Show when={props.card.description}>
           <p class="text-xs opacity-60">{props.card.description}</p>
@@ -215,9 +193,7 @@ function ExpandedLane(props: {
           </Show>
         </Show>
 
-        <For each={props.cards}>
-          {(card) => <CardItem card={card} onRemove={creation.removeCard} />}
-        </For>
+        <For each={props.cards}>{(card) => <CardItem card={card} />}</For>
       </div>
     </div>
   );
