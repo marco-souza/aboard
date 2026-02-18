@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "solid-testing-library";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import OmniMenu from "~/components/OmniMenu";
+import OmniMenu from "~/components/OmniMenu/component";
 
 afterEach(cleanup);
 

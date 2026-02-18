@@ -1,5 +1,5 @@
 import { For } from "solid-js";
-import { type OmniMenuState, useOmniMenu } from "~/components/OmniMenu.hooks";
+import { type OmniMenuState, useOmniMenu } from "~/components/OmniMenu/hooks";
 
 function Header() {
   return (
