@@ -71,7 +71,7 @@ export const BoardService = {
     }
 
     const position = cardsInLane(board.cards, laneId).length;
-    const now = new Date().toISOString();
+    const now = new Date();
     const card: Card = {
       id: uuid(),
       title,
@@ -130,7 +130,7 @@ export const BoardService = {
       ...card,
       laneId: targetLaneId,
       position: 0,
-      updatedAt: new Date().toISOString(),
+      updatedAt: new Date(),
     });
     const reorderedTarget = assignPositions(targetCards);
 
