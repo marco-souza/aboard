@@ -8,7 +8,7 @@ import {
   formatDate,
   useCardCreation,
   useBoardView,
-} from "./BoardView.hooks";
+} from "./hooks";
 
 function LaneControlCard(props: {
   onCreateCard: () => void;
