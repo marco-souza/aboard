@@ -1,59 +1,7 @@
-import { z } from "zod";
-
+import type { UserSession } from "~/domain/auth/schema";
 import { MAX_SESSION_AGE, SESSION_COOKIE_NAME } from "~/domain/auth/constants";
-import {
-  type SessionData,
-  type UserSession,
-  sessionDataSchema,
-  userSessionSchema,
-} from "~/domain/auth/schema";
-import { type Provider, providerEnum } from "~/domain/shared/provider";
-import { createErrorSummary } from "~/lib/zod-errors";
-
-/**
- * Validates a session data object against the schema.
- * Returns validation result with error details if invalid.
- */
-export function validateSessionData(data: unknown): {
-  valid: boolean;
-  data?: SessionData;
-  error?: string;
-} {
-  const result = sessionDataSchema.safeParse(data);
-  if (!result.success) {
-    return {
-      valid: false,
-      error: createErrorSummary(result.error),
-    };
-  }
-  return { valid: true, data: result.data };
-}
-
-/**
- * Validates a user session object against the schema.
- * Returns validation result with error details if invalid.
- */
-export function validateUserSession(data: unknown): {
-  valid: boolean;
-  user?: UserSession;
-  error?: string;
-} {
-  const result = userSessionSchema.safeParse(data);
-  if (!result.success) {
-    return {
-      valid: false,
-      error: createErrorSummary(result.error),
-    };
-  }
-  return { valid: true, user: result.data };
-}
-
-/**
- * Checks if a provider name is valid according to the provider enum.
- */
-export function isValidProvider(provider: unknown): provider is Provider {
-  return providerEnum.safeParse(provider).success;
-}
+import type { Provider } from "~/domain/shared/provider";
+import { userSessionSchema } from "~/domain/auth/schema";
 
 /**
  * Extracts normalized user data from an OAuth provider payload.
@@ -93,20 +41,6 @@ export function extractOAuthUser(
   } catch {
     return null;
   }
-}
-
-/**
- * Checks if a user is authenticated (has valid session).
- */
-export function isAuthenticated(session: SessionData | null): boolean {
-  return session != null;
-}
-
-/**
- * Checks if an email is in a valid format.
- */
-export function isValidEmail(email: unknown): boolean {
-  return z.string().email().safeParse(email).success;
 }
 
 /**

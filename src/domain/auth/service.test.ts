@@ -3,141 +3,10 @@ import { describe, it, expect } from "vitest";
 import {
   extractOAuthUser,
   getSessionCookieConfig,
-  isAuthenticated,
-  isValidEmail,
-  isValidProvider,
-  validateSessionData,
-  validateUserSession,
 } from "~/domain/auth/service";
 import { SESSION_COOKIE_NAME, MAX_SESSION_AGE } from "~/domain/auth/constants";
 
 describe("Auth Service", () => {
-  describe("validateUserSession", () => {
-    it("should validate a valid user session", () => {
-      const validSession = {
-        name: "John Doe",
-        login: "johndoe",
-        email: "john@example.com",
-        provider: "github" as const,
-        avatar: "https://example.com/avatar.jpg",
-      };
-
-      const result = validateUserSession(validSession);
-
-      expect(result.valid).toBe(true);
-      expect(result.user).toEqual(validSession);
-      expect(result.error).toBeUndefined();
-    });
-
-    it("should reject invalid email", () => {
-      const invalidSession = {
-        name: "John Doe",
-        login: "johndoe",
-        email: "not-an-email",
-        provider: "github" as const,
-        avatar: "https://example.com/avatar.jpg",
-      };
-
-      const result = validateUserSession(invalidSession);
-
-      expect(result.valid).toBe(false);
-      expect(result.error).toBeDefined();
-    });
-
-    it("should reject invalid URL for avatar", () => {
-      const invalidSession = {
-        name: "John Doe",
-        login: "johndoe",
-        email: "john@example.com",
-        provider: "github" as const,
-        avatar: "not-a-url",
-      };
-
-      const result = validateUserSession(invalidSession);
-
-      expect(result.valid).toBe(false);
-      expect(result.error).toBeDefined();
-    });
-
-    it("should use default name if not provided", () => {
-      const sessionWithoutName = {
-        login: "johndoe",
-        email: "john@example.com",
-        provider: "github" as const,
-        avatar: "https://example.com/avatar.jpg",
-      };
-
-      const result = validateUserSession(sessionWithoutName);
-
-      expect(result.valid).toBe(true);
-      expect(result.user?.name).toBe("Jane Doe");
-    });
-
-    it("should reject invalid provider", () => {
-      const invalidSession = {
-        name: "John Doe",
-        login: "johndoe",
-        email: "john@example.com",
-        provider: "invalid-provider",
-        avatar: "https://example.com/avatar.jpg",
-      };
-
-      const result = validateUserSession(invalidSession);
-
-      expect(result.valid).toBe(false);
-    });
-  });
-
-  describe("validateSessionData", () => {
-    it("should validate valid session data", () => {
-      const sessionData = {
-        user: {
-          name: "John Doe",
-          login: "johndoe",
-          email: "john@example.com",
-          provider: "github" as const,
-          avatar: "https://example.com/avatar.jpg",
-        },
-        token: "some-token-string",
-      };
-
-      const result = validateSessionData(sessionData);
-
-      expect(result.valid).toBe(true);
-      expect(result.data).toEqual(sessionData);
-    });
-
-    it("should reject missing token", () => {
-      const incompleteSession = {
-        user: {
-          name: "John Doe",
-          login: "johndoe",
-          email: "john@example.com",
-          provider: "github" as const,
-          avatar: "https://example.com/avatar.jpg",
-        },
-      };
-
-      const result = validateSessionData(incompleteSession);
-
-      expect(result.valid).toBe(false);
-      expect(result.error).toBeDefined();
-    });
-  });
-
-  describe("isValidProvider", () => {
-    it("should accept valid providers", () => {
-      expect(isValidProvider("github")).toBe(true);
-      expect(isValidProvider("google")).toBe(true);
-    });
-
-    it("should reject invalid providers", () => {
-      expect(isValidProvider("twitter")).toBe(false);
-      expect(isValidProvider("invalid")).toBe(false);
-      expect(isValidProvider(123)).toBe(false);
-    });
-  });
-
   describe("extractOAuthUser", () => {
     it("should extract GitHub user from OAuth payload", () => {
       const payload = {
@@ -203,8 +72,8 @@ describe("Auth Service", () => {
     it("should return null for invalid provider", () => {
       const payload = { email: "test@example.com" };
 
-      // @ts-expect-error Testing invalid provider
-      const user = extractOAuthUser("invalid", payload);
+      // biome-ignore lint/suspicious/noExplicitAny: Testing invalid provider
+      const user = extractOAuthUser("invalid" as any, payload);
 
       expect(user).toBeNull();
     });
@@ -222,46 +91,6 @@ describe("Auth Service", () => {
     });
   });
 
-  describe("isAuthenticated", () => {
-    it("should return true for valid session", () => {
-      const session = {
-        user: {
-          name: "John Doe",
-          login: "johndoe",
-          email: "john@example.com",
-          provider: "github" as const,
-          avatar: "https://example.com/avatar.jpg",
-        },
-        token: "token",
-      };
-
-      expect(isAuthenticated(session)).toBe(true);
-    });
-
-    it("should return false for null session", () => {
-      expect(isAuthenticated(null)).toBe(false);
-    });
-
-    it("should return false for undefined session", () => {
-      // biome-ignore lint/suspicious/noExplicitAny: Testing type guard
-      expect(isAuthenticated(undefined as any)).toBe(false);
-    });
-  });
-
-  describe("isValidEmail", () => {
-    it("should accept valid emails", () => {
-      expect(isValidEmail("john@example.com")).toBe(true);
-      expect(isValidEmail("jane.doe+tag@example.co.uk")).toBe(true);
-    });
-
-    it("should reject invalid emails", () => {
-      expect(isValidEmail("invalid")).toBe(false);
-      expect(isValidEmail("invalid@")).toBe(false);
-      expect(isValidEmail("@example.com")).toBe(false);
-      expect(isValidEmail(123)).toBe(false);
-    });
-  });
-
   describe("getSessionCookieConfig", () => {
     it("should return correct cookie configuration", () => {
       const config = getSessionCookieConfig();
@@ -274,12 +103,12 @@ describe("Auth Service", () => {
       expect(config.path).toBe("/");
     });
 
-    it("should not be mutable", () => {
-      const config = getSessionCookieConfig();
-      const newConfig = getSessionCookieConfig();
+    it("should return fresh config each time", () => {
+      const config1 = getSessionCookieConfig();
+      const config2 = getSessionCookieConfig();
 
-      expect(config).toEqual(newConfig);
-      expect(config).not.toBe(newConfig);
+      expect(config1).toEqual(config2);
+      expect(config1).not.toBe(config2);
     });
   });
 });
