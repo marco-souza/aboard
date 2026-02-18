@@ -23,6 +23,9 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
+# Clouflare wrangler
+.wrangler/
+
 # pulumi
 infra/.pulumi/
 infra/.Pulumi.*.(yaml|yml).bak
