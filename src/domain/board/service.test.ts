@@ -6,6 +6,7 @@ import {
   buildLane,
   resetFixtureCounter,
 } from "./fixtures";
+import { DEFAULT_LANES } from "./constants";
 import { BoardService } from "./service";
 
 afterEach(resetFixtureCounter);
@@ -16,8 +17,14 @@ describe("BoardService", () => {
       const board = BoardService.createBoard("Sprint 1");
       expect(board.title).toBe("Sprint 1");
       expect(board.id).toBeDefined();
-      expect(board.lanes).toEqual([]);
       expect(board.cards).toEqual([]);
+    });
+
+    it("creates default lanes in order", () => {
+      const board = BoardService.createBoard("Sprint 1");
+      expect(board.lanes).toHaveLength(DEFAULT_LANES.length);
+      expect(board.lanes.map((l) => l.title)).toEqual([...DEFAULT_LANES]);
+      expect(board.lanes.map((l) => l.position)).toEqual([0, 1, 2]);
     });
   });
 
