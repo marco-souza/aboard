@@ -1,13 +1,11 @@
 import { For, Show } from "solid-js";
-
 import type { Card, Lane } from "~/domain/board/schema";
-
 import {
   type BoardViewState,
   type CardCreationState,
   formatDate,
-  useCardCreation,
   useBoardView,
+  useCardCreation,
 } from "./hooks";
 
 function LaneControlCard(props: {

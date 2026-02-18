@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
 import { render } from "solid-testing-library";
+import { describe, expect, it } from "vitest";
 import BoardView from "./component";
 
 describe("BoardView", () => {
