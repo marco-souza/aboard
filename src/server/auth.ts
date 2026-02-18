@@ -3,11 +3,11 @@ import { googleAuth } from "@hono/oauth-providers/google";
 import { Hono } from "hono";
 import { deleteCookie, setCookie } from "hono/cookie";
 import { config } from "~/config";
+import { SESSION_COOKIE_NAME } from "~/domain/auth/constants";
 import {
-  MAX_SESSION_AGE,
-  SESSION_COOKIE_NAME,
-  SESSION_COOKIE_PATH,
-} from "~/domain/auth/constants";
+  extractOAuthUser,
+  getSessionCookieConfig,
+} from "~/domain/auth/service";
 import { sessionDataSchema } from "~/domain/auth/schema";
 import { routes } from "./contants";
 
@@ -29,23 +29,23 @@ export const auth = new Hono()
       return c.redirect(`${routes.public.login}?error=github_auth_failed`);
     }
 
+    // Extract and normalize OAuth user data
+    const extractedUser = extractOAuthUser("github", user);
+    if (!extractedUser) {
+      return c.redirect(`${routes.public.login}?error=github_auth_failed`);
+    }
+
+    // Create session with validated user data
     const sessionData = sessionDataSchema.parse({
-      user: {
-        name: user.name || user.login,
-        avatar: user.avatar_url,
-        email: user.email,
-        login: user.login,
-        provider: "github",
-      },
+      user: extractedUser,
       token: token.token,
     });
 
+    const cookieConfig = getSessionCookieConfig();
     setCookie(c, SESSION_COOKIE_NAME, JSON.stringify(sessionData), {
-      path: SESSION_COOKIE_PATH,
+      ...cookieConfig,
       secure: import.meta.env.PROD,
       httpOnly: import.meta.env.PROD,
-      maxAge: MAX_SESSION_AGE, // 7 days
-      sameSite: "Lax",
     });
 
     return c.redirect(routes.private.dashboard);
@@ -66,34 +66,34 @@ export const auth = new Hono()
       return c.redirect(`${routes.public.login}?error=google_auth_failed`);
     }
 
+    // Extract and normalize OAuth user data
+    const extractedUser = extractOAuthUser("google", user);
+    if (!extractedUser) {
+      return c.redirect(`${routes.public.login}?error=google_auth_failed`);
+    }
+
+    // Create session with validated user data
     const sessionData = sessionDataSchema.parse({
-      user: {
-        name: user.name || user.email,
-        avatar: user.picture,
-        email: user.email,
-        login: user.email,
-        provider: "google",
-      },
+      user: extractedUser,
       token: token.token,
     });
 
+    const cookieConfig = getSessionCookieConfig();
     setCookie(c, SESSION_COOKIE_NAME, JSON.stringify(sessionData), {
-      path: SESSION_COOKIE_PATH,
+      ...cookieConfig,
       secure: import.meta.env.PROD,
       httpOnly: import.meta.env.PROD,
-      maxAge: MAX_SESSION_AGE, // 7 days
-      sameSite: "Lax",
     });
 
     return c.redirect(routes.private.dashboard);
   })
   .get("/logout", (c) => {
+    const cookieConfig = getSessionCookieConfig();
     deleteCookie(c, SESSION_COOKIE_NAME, {
-      path: SESSION_COOKIE_PATH,
+      ...cookieConfig,
       maxAge: 0,
       secure: import.meta.env.PROD,
       httpOnly: import.meta.env.PROD,
-      sameSite: "Lax",
     });
 
     return c.redirect(routes.public.login);
