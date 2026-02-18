@@ -1,5 +1,6 @@
 ---
 import { routes } from "~/server/contants";
+import OmniMenu from "~/components/OmniMenu";
 
 interface Props {
   boardName?: string;
@@ -24,14 +25,13 @@ const { boardName = "Playground" } = Astro.props;
       <div class="w-8 h-8 rounded bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-sm">
         {boardName.slice(0, 1).toUpperCase()}
       </div>
+
       <h1 class="text-3xl font-bold text-base-content tracking-tight">{boardName}</h1>
 
-        <span class="kbd kbd-sm text-xs">Alt</span>
-        <span class="kbd kbd-sm text-xs">A</span>
+      <span class="kbd kbd-sm text-xs">Option</span>
+      <span class="kbd kbd-sm text-xs">A</span>
 
-      <button class="btn btn-ghost btn-xs btn-square opacity-50 hover:opacity-100">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-      </button>
+      <OmniMenu client:only />
     </div>
   
 

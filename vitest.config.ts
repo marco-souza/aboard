@@ -1,9 +1,12 @@
-import { getViteConfig } from "astro/config";
+import { defineConfig } from "vitest/config";
+import solidPlugin from "vite-plugin-solid";
+import tsconfigPaths from "vite-tsconfig-paths";
 
-export default getViteConfig({
+export default defineConfig({
+  plugins: [solidPlugin(), tsconfigPaths()],
   test: {
     globals: true,
-    environment: "node",
+    environment: "jsdom",
     ui: true,
   },
 });
