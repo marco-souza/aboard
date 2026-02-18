@@ -1,11 +1,13 @@
-import { describe, it, expect } from "vitest";
 import { createRoot } from "solid-js";
+import { describe, expect, it } from "vitest";
 import {
+  type BoardViewState,
+  type CardCreationState,
   formatDate,
-  useBoardView,
-  useCardCreation,
   MAX_VISIBLE_AVATARS,
   MOCK_WATCHERS,
+  useBoardView,
+  useCardCreation,
 } from "./hooks";
 
 describe("BoardView.hooks", () => {
@@ -27,75 +29,75 @@ describe("BoardView.hooks", () => {
 
   describe("useBoardView", () => {
     it("initializes with board store", () => {
-      let view;
+      let view: BoardViewState | undefined;
       createRoot(() => {
         view = useBoardView("Test Board");
       });
 
       expect(view).toBeDefined();
-      expect(view.store).toBeDefined();
-      expect(view.lanes).toBeDefined();
+      expect(view?.store).toBeDefined();
+      expect(view?.lanes).toBeDefined();
     });
 
     it("exposes lanes from store", () => {
-      let view;
+      let view: BoardViewState | undefined;
       createRoot(() => {
         view = useBoardView("Test Board");
       });
 
-      const lanes = view.lanes();
+      const lanes = view?.lanes();
       expect(Array.isArray(lanes)).toBe(true);
       expect(lanes.length).toBeGreaterThan(0);
     });
 
     it("provides laneCards function", () => {
-      let view;
+      let view: BoardViewState | undefined;
       createRoot(() => {
         view = useBoardView("Test Board");
       });
 
-      const lanes = view.lanes();
-      const cards = view.laneCards(lanes[0].id);
+      const lanes = view?.lanes();
+      const cards = view?.laneCards(lanes[0].id);
       expect(Array.isArray(cards)).toBe(true);
     });
 
     it("provides isDefaultLane function", () => {
-      let view;
+      let view: BoardViewState | undefined;
       createRoot(() => {
         view = useBoardView("Test Board");
       });
 
-      const lanes = view.lanes();
-      const isDefault = view.isDefaultLane(lanes[0].id);
+      const lanes = view?.lanes();
+      const isDefault = view?.isDefaultLane(lanes[0].id);
       expect(typeof isDefault).toBe("boolean");
     });
 
     it("limits visible watchers to MAX_VISIBLE_AVATARS", () => {
-      let view;
+      let view: BoardViewState | undefined;
       createRoot(() => {
         view = useBoardView("Test Board");
       });
 
-      expect(view.visibleWatchers.length).toBe(MAX_VISIBLE_AVATARS);
-      expect(view.visibleWatchers.length).toBeLessThanOrEqual(
+      expect(view?.visibleWatchers.length).toBe(MAX_VISIBLE_AVATARS);
+      expect(view?.visibleWatchers.length).toBeLessThanOrEqual(
         MOCK_WATCHERS.length,
       );
     });
 
     it("calculates hidden watcher count", () => {
-      let view;
+      let view: BoardViewState | undefined;
       createRoot(() => {
         view = useBoardView("Test Board");
       });
 
       const expectedHidden = MOCK_WATCHERS.length - MAX_VISIBLE_AVATARS;
-      expect(view.hiddenWatcherCount).toBe(expectedHidden);
+      expect(view?.hiddenWatcherCount).toBe(expectedHidden);
     });
   });
 
   describe("useCardCreation", () => {
     it("initializes with creating false", () => {
-      let creation;
+      let creation: CardCreationState | undefined;
       createRoot(() => {
         const view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
@@ -103,11 +105,11 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      expect(creation.creating()).toBe(false);
+      expect(creation?.creating()).toBe(false);
     });
 
     it("initializes with empty title", () => {
-      let creation;
+      let creation: CardCreationState | undefined;
       createRoot(() => {
         const view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
@@ -115,11 +117,11 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      expect(creation.newTitle()).toBe("");
+      expect(creation?.newTitle()).toBe("");
     });
 
     it("startCreate enables creating state", () => {
-      let creation;
+      let creation: CardCreationState | undefined;
       createRoot(() => {
         const view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
@@ -127,12 +129,12 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      creation.startCreate();
-      expect(creation.creating()).toBe(true);
+      creation?.startCreate();
+      expect(creation?.creating()).toBe(true);
     });
 
     it("cancelCreate disables creating state", () => {
-      let creation;
+      let creation: CardCreationState | undefined;
       createRoot(() => {
         const view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
@@ -140,16 +142,16 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      creation.startCreate();
-      creation.setNewTitle("Test");
-      creation.cancelCreate();
+      creation?.startCreate();
+      creation?.setNewTitle("Test");
+      creation?.cancelCreate();
 
-      expect(creation.creating()).toBe(false);
-      expect(creation.newTitle()).toBe("");
+      expect(creation?.creating()).toBe(false);
+      expect(creation?.newTitle()).toBe("");
     });
 
     it("canSubmit is false with empty title", () => {
-      let creation;
+      let creation: CardCreationState | undefined;
       createRoot(() => {
         const view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
@@ -157,11 +159,11 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      expect(creation.canSubmit()).toBe(false);
+      expect(creation?.canSubmit()).toBe(false);
     });
 
     it("canSubmit is true with non-empty title", () => {
-      let creation;
+      let creation: CardCreationState | undefined;
       createRoot(() => {
         const view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
@@ -169,12 +171,12 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      creation.setNewTitle("Test Card");
-      expect(creation.canSubmit()).toBe(true);
+      creation?.setNewTitle("Test Card");
+      expect(creation?.canSubmit()).toBe(true);
     });
 
     it("canSubmit is false with only whitespace", () => {
-      let creation;
+      let creation: CardCreationState | undefined;
       createRoot(() => {
         const view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
@@ -182,12 +184,13 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      creation.setNewTitle("   ");
-      expect(creation.canSubmit()).toBe(false);
+      creation?.setNewTitle("   ");
+      expect(creation?.canSubmit()).toBe(false);
     });
 
     it("submitCard adds card to store", () => {
-      let creation, view;
+      let creation: CardCreationState | undefined;
+      let view: BoardViewState | undefined;
       createRoot(() => {
         view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
@@ -195,18 +198,19 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      const laneId = view.store.defaultLaneId();
-      const initialCount = view.laneCards(laneId).length;
+      const laneId = view?.store.defaultLaneId();
+      const initialCount = view?.laneCards(laneId).length;
 
-      creation.setNewTitle("New Card");
-      creation.submitCard(new Event("submit"));
+      creation?.setNewTitle("New Card");
+      creation?.submitCard(new Event("submit"));
 
-      const newCount = view.laneCards(laneId).length;
+      const newCount = view?.laneCards(laneId).length;
       expect(newCount).toBe(initialCount + 1);
     });
 
     it("submitCard clears title after submission", () => {
-      let creation, view;
+      let creation: CardCreationState | undefined;
+      let view: BoardViewState | undefined;
       createRoot(() => {
         view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
@@ -214,14 +218,15 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      creation.setNewTitle("New Card");
-      creation.submitCard(new Event("submit"));
+      creation?.setNewTitle("New Card");
+      creation?.submitCard(new Event("submit"));
 
-      expect(creation.newTitle()).toBe("");
+      expect(creation?.newTitle()).toBe("");
     });
 
     it("submitCard disables creating after submission", () => {
-      let creation, view;
+      let creation: CardCreationState | undefined;
+      let view: BoardViewState | undefined;
       createRoot(() => {
         view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
@@ -229,15 +234,16 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      creation.startCreate();
-      creation.setNewTitle("New Card");
-      creation.submitCard(new Event("submit"));
+      creation?.startCreate();
+      creation?.setNewTitle("New Card");
+      creation?.submitCard(new Event("submit"));
 
-      expect(creation.creating()).toBe(false);
+      expect(creation?.creating()).toBe(false);
     });
 
     it("submitCard does nothing with empty title", () => {
-      let creation, view;
+      let creation: CardCreationState | undefined;
+      let view: BoardViewState | undefined;
       createRoot(() => {
         view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
@@ -245,17 +251,18 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      const laneId = view.store.defaultLaneId();
-      const initialCount = view.laneCards(laneId).length;
+      const laneId = view?.store.defaultLaneId();
+      const initialCount = view?.laneCards(laneId).length;
 
-      creation.submitCard(new Event("submit"));
+      creation?.submitCard(new Event("submit"));
 
-      const newCount = view.laneCards(laneId).length;
+      const newCount = view?.laneCards(laneId).length;
       expect(newCount).toBe(initialCount);
     });
 
     it("removeCard removes card from store", () => {
-      let creation, view;
+      let creation: CardCreationState | undefined;
+      let view: BoardViewState | undefined;
       createRoot(() => {
         view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
@@ -263,17 +270,17 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      const laneId = view.store.defaultLaneId();
-      creation.setNewTitle("Card to Remove");
-      creation.submitCard(new Event("submit"));
+      const laneId = view?.store.defaultLaneId();
+      creation?.setNewTitle("Card to Remove");
+      creation?.submitCard(new Event("submit"));
 
-      const cards = view.laneCards(laneId);
+      const cards = view?.laneCards(laneId);
       const cardId = cards[cards.length - 1].id;
       const initialCount = cards.length;
 
-      creation.removeCard(cardId);
+      creation?.removeCard(cardId);
 
-      const newCards = view.laneCards(laneId);
+      const newCards = view?.laneCards(laneId);
       expect(newCards.length).toBe(initialCount - 1);
     });
   });

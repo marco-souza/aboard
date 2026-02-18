@@ -1,5 +1,4 @@
 import { createMemo, createSignal } from "solid-js";
-
 import { type BoardStore, useBoardStore } from "~/stores/board.store";
 
 export const MAX_VISIBLE_AVATARS = 7;
