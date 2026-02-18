@@ -1,7 +1,6 @@
-import type { UserSession } from "~/domain/auth/schema";
 import { MAX_SESSION_AGE, SESSION_COOKIE_NAME } from "~/domain/auth/constants";
+import { type UserSession, userSessionSchema } from "~/domain/auth/schema";
 import type { Provider } from "~/domain/shared/provider";
-import { userSessionSchema } from "~/domain/auth/schema";
 
 /**
  * Extracts normalized user data from an OAuth provider payload.
