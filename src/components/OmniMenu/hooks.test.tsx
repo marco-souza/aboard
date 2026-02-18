@@ -1,6 +1,7 @@
 import { cleanup, renderHook } from "solid-testing-library";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { useOmniMenu } from "~/components/OmniMenu.hooks";
+
+import { useOmniMenu } from "~/components/OmniMenu/hooks";
 
 afterEach(cleanup);
 
