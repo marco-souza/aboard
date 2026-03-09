@@ -54,7 +54,7 @@ DO NOT add:
 
 ## AGENTS.md Structure
 
-```
+````bash
 # AGENTS.md
 
 - Build, Lint & Test Commands
@@ -62,7 +62,7 @@ DO NOT add:
 - Code Style & Conventions
 - Domain Layer Patterns        ← Add here for DDD/services/testing
 - [Other sections as needed]
-```
+```bash
 
 ## Example: Good Addition
 
@@ -70,19 +70,19 @@ DO NOT add:
 
 **Good AGENTS.md entry**:
 
-```
+```bash
 - **State Management**: Use SolidJS signals for reactive updates
   - Support optimistic updates: update UI immediately, sync asynchronously
   - Separate UI state (drag, loading, error) from domain state
-```
+```bash
 
 **Bad entry** (too specific):
 
-```
+```bash
 - **Kanban Store**: Create single Board aggregate with card/lane arrays
   - Use withOptimisticUpdate() helper function
   - Store file: src/stores/kanban.ts
-```
+```bash
 
 ## Related Skills
 
@@ -99,3 +99,4 @@ Before updating AGENTS.md:
 - [ ] Is it general enough for new projects?
 - [ ] Does it fit an existing section or need a new one?
 - [ ] Is the language principle-focused, not implementation-focused?
+````

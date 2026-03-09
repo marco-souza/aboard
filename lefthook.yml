@@ -2,12 +2,12 @@ pre-commit:
   parallel: true
   jobs:
     - name: lint code
-      run: bunx biome format --write {staged_files}
+      run: bunx biome check --write --unsafe {staged_files}
       glob: "*.{ts,tsx,js,jsx,astro,json}"
       stage_fixed: true
 
     - name: lint docs
-      run: bunx prettier --write {staged_files}
+      run: bunx prettier --write {staged_files} && bunx markdownlint-cli2 --fix {staged_files}
       glob: "*.{md,mdx}"
       stage_fixed: true
 

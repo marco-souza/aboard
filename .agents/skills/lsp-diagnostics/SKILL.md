@@ -27,25 +27,25 @@ Run TypeScript compiler and linting diagnostics to catch syntax errors, type iss
 
 ### Check specific file
 
-```
+````bash
 Run diagnostics on src/stores/kanban.ts to find all errors
-```
+```bash
 
 ### Check entire directory
 
-```
+```bash
 Run diagnostics on src/lib/domain/ to verify all domain files
-```
+```bash
 
 ### Check project after changes
 
-```
+```bash
 Run diagnostics on src/ to ensure no regressions after refactoring
-```
+```bash
 
 ## Example Output
 
-```
+```bash
 CRITICAL: src/stores/kanban.ts:45:12
   Missing type annotation on 'board' variable
 
@@ -54,7 +54,7 @@ HIGH: src/lib/domain/services.ts:78:1
 
 MEDIUM: src/components/kanban/Card.tsx:12:5
   Unused import: 'useState' (import { useState } from 'solid-js')
-```
+```bash
 
 ## Integration with Project
 
@@ -100,3 +100,4 @@ When fixing diagnostics issues:
 - Reports organized by severity (CRITICAL > HIGH > MEDIUM > LOW)
 - **All issues must be fixed**: errors, warnings, hints, and deprecations are all treated as blocking issues
 - Returns zero exit code only when ALL diagnostics (including hints) are resolved
+````

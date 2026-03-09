@@ -76,3 +76,8 @@ When building domain-specific features (e.g., Kanban boards):
   - Create fixtures for test data
   - Test happy path + edge cases (non-existent items, duplicates, invariants)
   - No mocking for pure functions
+
+## Strict API & Version Adherence
+
+- **Dependency Oracle**: Agents MUST NOT hallucinate framework APIs. All Hono RPC, Astro routing, and SolidJS reactivity code MUST be verified against local types (`node_modules/**/*.d.ts`), `package.json` versions, or official web documentation before implementation.
+- **Rule Enforcement**: The Maestro orchestrator will act as a Quality Gate and REJECT any subagent code that uses outdated or hallucinated APIs. Always invoke the `dependency-oracle` skill to confirm usage!

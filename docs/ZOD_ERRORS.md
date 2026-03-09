@@ -30,4 +30,4 @@ if (!result.success) {
 
 ## See Also
 
-- Zod docs: https://zod.dev/error-formatting
+- Zod docs: <https://zod.dev/error-formatting>

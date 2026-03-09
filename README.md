@@ -70,7 +70,7 @@ bun run preview
 
 ## Project Structure
 
-```
+```bash
 /
 ├── public/              # Static assets
 ├── src/
