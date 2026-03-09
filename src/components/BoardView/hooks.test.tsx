@@ -10,6 +10,13 @@ import {
   useCardCreation,
 } from "./hooks";
 
+function expectDefined<T>(
+  val: T | undefined | null,
+): asserts val is NonNullable<T> {
+  expect(val).toBeDefined();
+  expect(val).not.toBeNull();
+}
+
 describe("BoardView.hooks", () => {
   describe("formatDate", () => {
     it("formats date with month, day, hour, minute", () => {
@@ -34,9 +41,9 @@ describe("BoardView.hooks", () => {
         view = useBoardView("Test Board");
       });
 
-      expect(view).toBeDefined();
-      expect(view?.store).toBeDefined();
-      expect(view?.lanes).toBeDefined();
+      expectDefined(view);
+      expect(view.store).toBeDefined();
+      expect(view.lanes).toBeDefined();
     });
 
     it("exposes lanes from store", () => {
@@ -45,7 +52,8 @@ describe("BoardView.hooks", () => {
         view = useBoardView("Test Board");
       });
 
-      const lanes = view?.lanes();
+      expectDefined(view);
+      const lanes = view.lanes();
       expect(Array.isArray(lanes)).toBe(true);
       expect(lanes.length).toBeGreaterThan(0);
     });
@@ -56,8 +64,10 @@ describe("BoardView.hooks", () => {
         view = useBoardView("Test Board");
       });
 
-      const lanes = view?.lanes();
-      const cards = view?.laneCards(lanes[0].id);
+      expectDefined(view);
+      const lanes = view.lanes();
+      expectDefined(lanes[0]);
+      const cards = view.laneCards(lanes[0].id);
       expect(Array.isArray(cards)).toBe(true);
     });
 
@@ -67,8 +77,10 @@ describe("BoardView.hooks", () => {
         view = useBoardView("Test Board");
       });
 
-      const lanes = view?.lanes();
-      const isDefault = view?.isDefaultLane(lanes[0].id);
+      expectDefined(view);
+      const lanes = view.lanes();
+      expectDefined(lanes[0]);
+      const isDefault = view.isDefaultLane(lanes[0].id);
       expect(typeof isDefault).toBe("boolean");
     });
 
@@ -78,8 +90,9 @@ describe("BoardView.hooks", () => {
         view = useBoardView("Test Board");
       });
 
-      expect(view?.visibleWatchers.length).toBe(MAX_VISIBLE_AVATARS);
-      expect(view?.visibleWatchers.length).toBeLessThanOrEqual(
+      expectDefined(view);
+      expect(view.visibleWatchers.length).toBe(MAX_VISIBLE_AVATARS);
+      expect(view.visibleWatchers.length).toBeLessThanOrEqual(
         MOCK_WATCHERS.length,
       );
     });
@@ -90,8 +103,9 @@ describe("BoardView.hooks", () => {
         view = useBoardView("Test Board");
       });
 
+      expectDefined(view);
       const expectedHidden = MOCK_WATCHERS.length - MAX_VISIBLE_AVATARS;
-      expect(view?.hiddenWatcherCount).toBe(expectedHidden);
+      expect(view.hiddenWatcherCount).toBe(expectedHidden);
     });
   });
 
@@ -105,7 +119,8 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      expect(creation?.creating()).toBe(false);
+      expectDefined(creation);
+      expect(creation.creating()).toBe(false);
     });
 
     it("initializes with empty title", () => {
@@ -117,7 +132,8 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      expect(creation?.newTitle()).toBe("");
+      expectDefined(creation);
+      expect(creation.newTitle()).toBe("");
     });
 
     it("startCreate enables creating state", () => {
@@ -129,8 +145,9 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      creation?.startCreate();
-      expect(creation?.creating()).toBe(true);
+      expectDefined(creation);
+      creation.startCreate();
+      expect(creation.creating()).toBe(true);
     });
 
     it("cancelCreate disables creating state", () => {
@@ -142,12 +159,13 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      creation?.startCreate();
-      creation?.setNewTitle("Test");
-      creation?.cancelCreate();
+      expectDefined(creation);
+      creation.startCreate();
+      creation.setNewTitle("Test");
+      creation.cancelCreate();
 
-      expect(creation?.creating()).toBe(false);
-      expect(creation?.newTitle()).toBe("");
+      expect(creation.creating()).toBe(false);
+      expect(creation.newTitle()).toBe("");
     });
 
     it("canSubmit is false with empty title", () => {
@@ -159,7 +177,8 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      expect(creation?.canSubmit()).toBe(false);
+      expectDefined(creation);
+      expect(creation.canSubmit()).toBe(false);
     });
 
     it("canSubmit is true with non-empty title", () => {
@@ -171,8 +190,9 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      creation?.setNewTitle("Test Card");
-      expect(creation?.canSubmit()).toBe(true);
+      expectDefined(creation);
+      creation.setNewTitle("Test Card");
+      expect(creation.canSubmit()).toBe(true);
     });
 
     it("canSubmit is false with only whitespace", () => {
@@ -184,8 +204,9 @@ describe("BoardView.hooks", () => {
         );
       });
 
-      creation?.setNewTitle("   ");
-      expect(creation?.canSubmit()).toBe(false);
+      expectDefined(creation);
+      creation.setNewTitle("   ");
+      expect(creation.canSubmit()).toBe(false);
     });
 
     it("submitCard adds card to store", () => {
@@ -194,17 +215,20 @@ describe("BoardView.hooks", () => {
       createRoot(() => {
         view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
-          view.store.defaultLaneId(),
+          /* biome-ignore lint/style/noNonNullAssertion: testing */ view!.store.defaultLaneId(),
         );
       });
 
-      const laneId = view?.store.defaultLaneId();
-      const initialCount = view?.laneCards(laneId).length;
+      expectDefined(view);
+      expectDefined(creation);
 
-      creation?.setNewTitle("New Card");
-      creation?.submitCard(new Event("submit"));
+      const laneId = view.store.defaultLaneId();
+      const initialCount = view.laneCards(laneId).length;
 
-      const newCount = view?.laneCards(laneId).length;
+      creation.setNewTitle("New Card");
+      creation.submitCard(new Event("submit"));
+
+      const newCount = view.laneCards(laneId).length;
       expect(newCount).toBe(initialCount + 1);
     });
 
@@ -214,14 +238,15 @@ describe("BoardView.hooks", () => {
       createRoot(() => {
         view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
-          view.store.defaultLaneId(),
+          /* biome-ignore lint/style/noNonNullAssertion: testing */ view!.store.defaultLaneId(),
         );
       });
 
-      creation?.setNewTitle("New Card");
-      creation?.submitCard(new Event("submit"));
+      expectDefined(creation);
+      creation.setNewTitle("New Card");
+      creation.submitCard(new Event("submit"));
 
-      expect(creation?.newTitle()).toBe("");
+      expect(creation.newTitle()).toBe("");
     });
 
     it("submitCard disables creating after submission", () => {
@@ -230,15 +255,16 @@ describe("BoardView.hooks", () => {
       createRoot(() => {
         view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
-          view.store.defaultLaneId(),
+          /* biome-ignore lint/style/noNonNullAssertion: testing */ view!.store.defaultLaneId(),
         );
       });
 
-      creation?.startCreate();
-      creation?.setNewTitle("New Card");
-      creation?.submitCard(new Event("submit"));
+      expectDefined(creation);
+      creation.startCreate();
+      creation.setNewTitle("New Card");
+      creation.submitCard(new Event("submit"));
 
-      expect(creation?.creating()).toBe(false);
+      expect(creation.creating()).toBe(false);
     });
 
     it("submitCard does nothing with empty title", () => {
@@ -247,16 +273,19 @@ describe("BoardView.hooks", () => {
       createRoot(() => {
         view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
-          view.store.defaultLaneId(),
+          /* biome-ignore lint/style/noNonNullAssertion: testing */ view!.store.defaultLaneId(),
         );
       });
 
-      const laneId = view?.store.defaultLaneId();
-      const initialCount = view?.laneCards(laneId).length;
+      expectDefined(view);
+      expectDefined(creation);
 
-      creation?.submitCard(new Event("submit"));
+      const laneId = view.store.defaultLaneId();
+      const initialCount = view.laneCards(laneId).length;
 
-      const newCount = view?.laneCards(laneId).length;
+      creation.submitCard(new Event("submit"));
+
+      const newCount = view.laneCards(laneId).length;
       expect(newCount).toBe(initialCount);
     });
 
@@ -266,21 +295,24 @@ describe("BoardView.hooks", () => {
       createRoot(() => {
         view = useBoardView("Test Board");
         creation = useCardCreation(view.store, () =>
-          view.store.defaultLaneId(),
+          /* biome-ignore lint/style/noNonNullAssertion: testing */ view!.store.defaultLaneId(),
         );
       });
 
-      const laneId = view?.store.defaultLaneId();
-      creation?.setNewTitle("Card to Remove");
-      creation?.submitCard(new Event("submit"));
+      expectDefined(view);
+      expectDefined(creation);
 
-      const cards = view?.laneCards(laneId);
+      const laneId = view.store.defaultLaneId();
+      creation.setNewTitle("Card to Remove");
+      creation.submitCard(new Event("submit"));
+
+      const cards = view.laneCards(laneId);
       const cardId = cards[cards.length - 1].id;
       const initialCount = cards.length;
 
-      creation?.removeCard(cardId);
+      creation.removeCard(cardId);
 
-      const newCards = view?.laneCards(laneId);
+      const newCards = view.laneCards(laneId);
       expect(newCards.length).toBe(initialCount - 1);
     });
   });

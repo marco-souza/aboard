@@ -71,7 +71,7 @@ export function useOmniMenu(options: UseOmniMenuOptions = {}) {
 
   function updateSearch(value: string) {
     setSearch(value);
-    setSearchCollapsed(new Set());
+    setSearchCollapsed(new Set<string>());
   }
 
   function toggleSection(key: string) {
