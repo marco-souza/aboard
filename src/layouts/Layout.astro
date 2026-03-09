@@ -11,19 +11,19 @@ const { title = "Aboard" } = Astro.props;
 ---
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-		<title>{title}</title>
-	</head>
+    <title>{title}</title>
+  </head>
 
-	<body>
+  <body>
     <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
       <div class="absolute -top-[20%] -left-[10%] w-[70vh] h-[70vh] rounded-full bg-primary/20 blur-[120px] opacity-70 animate-pulse"></div>
       <div class="absolute top-[40%] -right-[10%] w-[60vh] h-[60vh] rounded-full bg-secondary/10 blur-[100px] opacity-60"></div>
@@ -39,5 +39,5 @@ const { title = "Aboard" } = Astro.props;
 
       <Footer />
     </div>
-	</body>
+  </body>
 </html>

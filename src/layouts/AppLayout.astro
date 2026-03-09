@@ -16,19 +16,20 @@ const {
 ---
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-		<title>{title}</title>
-	</head>
+    <title>{title}</title>
+  </head>
 
-	<body>
+  <body>
     {background === "blobs" && (
       <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
         <div class="absolute -top-[20%] -left-[10%] w-[70vh] h-[70vh] rounded-full bg-primary/20 blur-[120px] opacity-70 animate-pulse"></div>
@@ -42,5 +43,5 @@ const {
     <div class="w-full relative z-10">
       <slot />
     </div>
-	</body>
+  </body>
 </html>
