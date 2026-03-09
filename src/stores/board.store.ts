@@ -1,8 +1,8 @@
 import { createMemo } from "solid-js";
 import { createStore } from "solid-js/store";
 import { DEFAULT_LANE_INDEX, DEFAULT_LANES } from "~/domain/board/constants";
-import type { Board } from "~/domain/board/schema";
-import { BoardService } from "~/domain/board/service";
+import type { Board, Card } from "~/domain/board/schema";
+import * as BoardService from "~/domain/board/service";
 
 export const DEFAULT_LANE_TITLES = DEFAULT_LANES;
 
@@ -13,12 +13,26 @@ export function useBoardStore(title: string) {
     [...board.lanes].sort((a, b) => a.position - b.position),
   );
 
+  const cardsByLane = createMemo(() => {
+    const grouped = new Map<string, Card[]>();
+    for (const card of board.cards) {
+      const list = grouped.get(card.laneId) || [];
+      list.push(card);
+      grouped.set(card.laneId, list);
+    }
+
+    // Sort cards within each lane
+    for (const list of grouped.values()) {
+      list.sort((a, b) => a.position - b.position);
+    }
+
+    return grouped;
+  });
+
   const defaultLaneId = createMemo(() => lanes()[DEFAULT_LANE_INDEX].id);
 
   function cardsInLane(laneId: string) {
-    return board.cards
-      .filter((c) => c.laneId === laneId)
-      .sort((a, b) => a.position - b.position);
+    return cardsByLane().get(laneId) || [];
   }
 
   function addLane(laneTitle: string) {

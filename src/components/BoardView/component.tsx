@@ -35,7 +35,7 @@ function LaneControlCard(props: {
           </p>
           <div class="divider my-0" />
           <div class="flex justify-center -space-x-2">
-            <For each={[...props.visibleWatchers]}>
+            <For each={props.visibleWatchers}>
               {(watcher) => (
                 <div
                   class={`avatar placeholder ${watcher.bg} w-8 h-8 rounded-full ring-2 ring-base-200 flex items-center justify-center`}

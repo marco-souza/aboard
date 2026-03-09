@@ -1,15 +1,16 @@
 import { z } from "zod";
 import { paginationSchema } from "~/domain/shared/pagination";
 import { providerEnum } from "~/domain/shared/provider";
+import { userBaseSchema } from "~/domain/shared/user";
 
-export const userSchema = z.strictObject({
-  id: z.uuid(),
-  name: z.string().default("Jane Doe"),
-  login: z.string(),
-  email: z.email(),
-  provider: providerEnum,
-  avatar: z.url(),
+/**
+ * User Entity Schema
+ * Represents a registered user in the system.
+ */
+export const userSchema = userBaseSchema.extend({
+  id: z.string().length(36, { message: "Invalid UUID length" }),
 });
+
 export type User = z.infer<typeof userSchema>;
 
 // API DTOs

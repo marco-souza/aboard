@@ -157,12 +157,8 @@ export function useOmniMenu(options: UseOmniMenuOptions = {}) {
       return;
     }
     options.onSelect?.(entry);
-    if (search()) {
-      updateSearch("");
-      resetSelection();
-    } else {
-      toggle();
-    }
+    options.onSelect?.(entry);
+    toggle();
   }
 
   return {

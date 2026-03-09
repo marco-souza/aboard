@@ -1,17 +1,14 @@
 import { z } from "zod";
-import { providerEnum } from "~/domain/shared/provider";
+import { userBaseSchema } from "~/domain/shared/user";
 
-export const userSessionSchema = z.strictObject({
-  name: z.string().default("Jane Doe"),
-  login: z.string(),
-  email: z.email(),
-  provider: providerEnum,
-  avatar: z.url(),
-});
+/**
+ * User session schema derived from base user data.
+ */
+export const userSessionSchema = userBaseSchema;
 export type UserSession = z.infer<typeof userSessionSchema>;
 
 export const sessionDataSchema = z.strictObject({
   user: userSessionSchema,
-  token: z.string(),
+  token: z.string().min(1),
 });
 export type SessionData = z.infer<typeof sessionDataSchema>;

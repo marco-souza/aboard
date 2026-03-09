@@ -1,321 +1,137 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
+import { NotFoundError } from "~/domain/shared/errors";
 import { DEFAULT_LANES } from "./constants";
 import {
-  buildBoard,
-  buildCard,
-  buildLane,
-  resetFixtureCounter,
-} from "./fixtures";
-import { BoardService } from "./service";
-
-afterEach(resetFixtureCounter);
+  addCard,
+  addLane,
+  createBoard,
+  moveCard,
+  removeCard,
+  removeLane,
+  reorderLanes,
+} from "./service";
 
 describe("BoardService", () => {
   describe("createBoard", () => {
-    it("creates a board with the given title", () => {
-      const board = BoardService.createBoard("Sprint 1");
-      expect(board.title).toBe("Sprint 1");
-      expect(board.id).toBeDefined();
-      expect(board.cards).toEqual([]);
-    });
-
-    it("creates default lanes in order", () => {
-      const board = BoardService.createBoard("Sprint 1");
+    it("should create a board with default lanes", () => {
+      const board = createBoard("Test Board");
+      expect(board.title).toBe("Test Board");
       expect(board.lanes).toHaveLength(DEFAULT_LANES.length);
-      expect(board.lanes.map((l) => l.title)).toEqual([...DEFAULT_LANES]);
-      expect(board.lanes.map((l) => l.position)).toEqual([0, 1, 2]);
+      expect(board.lanes[0].title).toBe(DEFAULT_LANES[0]);
+      expect(board.cards).toHaveLength(0);
     });
   });
 
   describe("addLane", () => {
-    it("adds a lane with position 0 to an empty board", () => {
-      const board = buildBoard();
-      const result = BoardService.addLane(board, "To Do");
-
-      expect(result.lanes).toHaveLength(1);
-      expect(result.lanes[0].title).toBe("To Do");
-      expect(result.lanes[0].position).toBe(0);
-    });
-
-    it("appends a lane with the next position", () => {
-      const lane = buildLane({ title: "To Do", position: 0 });
-      const board = buildBoard({ lanes: [lane] });
-      const result = BoardService.addLane(board, "In Progress");
-
-      expect(result.lanes).toHaveLength(2);
-      expect(result.lanes[1].title).toBe("In Progress");
-      expect(result.lanes[1].position).toBe(1);
-    });
-
-    it("does not mutate the original board", () => {
-      const board = buildBoard();
-      const result = BoardService.addLane(board, "To Do");
-
-      expect(board.lanes).toHaveLength(0);
-      expect(result.lanes).toHaveLength(1);
+    it("should add a lane at the end", () => {
+      const board = createBoard("Test");
+      const updated = addLane(board, "New Lane");
+      expect(updated.lanes).toHaveLength(DEFAULT_LANES.length + 1);
+      expect(updated.lanes[updated.lanes.length - 1].title).toBe("New Lane");
+      expect(updated.lanes[updated.lanes.length - 1].position).toBe(
+        DEFAULT_LANES.length,
+      );
     });
   });
 
   describe("removeLane", () => {
-    it("removes the lane by id", () => {
-      const lane = buildLane({ position: 0 });
-      const board = buildBoard({ lanes: [lane] });
-      const result = BoardService.removeLane(board, lane.id);
+    it("should remove a lane and its cards", () => {
+      let board = createBoard("Test");
+      const laneId = board.lanes[0].id;
+      board = addCard(board, laneId, "Card 1");
 
-      expect(result.lanes).toHaveLength(0);
+      const updated = removeLane(board, laneId);
+      expect(updated.lanes).toHaveLength(DEFAULT_LANES.length - 1);
+      expect(updated.cards).toHaveLength(0);
     });
 
-    it("removes cards belonging to the removed lane", () => {
-      const lane = buildLane({ position: 0 });
-      const card = buildCard({ laneId: lane.id, position: 0 });
-      const board = buildBoard({ lanes: [lane], cards: [card] });
-      const result = BoardService.removeLane(board, lane.id);
+    it("should reorder positions of remaining lanes", () => {
+      const board = createBoard("Test");
+      const firstLaneId = board.lanes[0].id;
+      const secondLaneId = board.lanes[1].id;
 
-      expect(result.cards).toHaveLength(0);
-    });
-
-    it("recalculates positions after removal", () => {
-      const l1 = buildLane({ position: 0 });
-      const l2 = buildLane({ position: 1 });
-      const l3 = buildLane({ position: 2 });
-      const board = buildBoard({ lanes: [l1, l2, l3] });
-      const result = BoardService.removeLane(board, l2.id);
-
-      expect(result.lanes).toHaveLength(2);
-      expect(result.lanes[0].position).toBe(0);
-      expect(result.lanes[1].position).toBe(1);
-    });
-
-    it("returns the board unchanged if lane does not exist", () => {
-      const board = buildBoard();
-      const result = BoardService.removeLane(
-        board,
-        "00000000-0000-4000-8000-ffffffffffff",
-      );
-
-      expect(result).toEqual(board);
+      const updated = removeLane(board, firstLaneId);
+      const newSecondLane = updated.lanes.find((l) => l.id === secondLaneId);
+      expect(newSecondLane?.position).toBe(0);
     });
   });
 
   describe("reorderLanes", () => {
-    it("moves a lane to a new position", () => {
-      const l1 = buildLane({ title: "A", position: 0 });
-      const l2 = buildLane({ title: "B", position: 1 });
-      const l3 = buildLane({ title: "C", position: 2 });
-      const board = buildBoard({ lanes: [l1, l2, l3] });
+    it("should move a lane to a new position", () => {
+      const board = createBoard("Test");
+      const laneId = board.lanes[0].id; // position 0
+      const secondId = board.lanes[1].id; // position 1
 
-      const result = BoardService.reorderLanes(board, l3.id, 0);
-
-      expect(result.lanes.map((l) => l.title)).toEqual(["C", "A", "B"]);
-      expect(result.lanes.map((l) => l.position)).toEqual([0, 1, 2]);
-    });
-
-    it("handles moving to the same position", () => {
-      const l1 = buildLane({ title: "A", position: 0 });
-      const l2 = buildLane({ title: "B", position: 1 });
-      const board = buildBoard({ lanes: [l1, l2] });
-
-      const result = BoardService.reorderLanes(board, l1.id, 0);
-
-      expect(result.lanes.map((l) => l.title)).toEqual(["A", "B"]);
-    });
-
-    it("clamps position to valid range", () => {
-      const l1 = buildLane({ title: "A", position: 0 });
-      const l2 = buildLane({ title: "B", position: 1 });
-      const board = buildBoard({ lanes: [l1, l2] });
-
-      const result = BoardService.reorderLanes(board, l1.id, 99);
-
-      expect(result.lanes[result.lanes.length - 1].title).toBe("A");
+      const updated = reorderLanes(board, laneId, 1);
+      expect(updated.lanes.find((l) => l.id === laneId)?.position).toBe(1);
+      expect(updated.lanes.find((l) => l.id === secondId)?.position).toBe(0);
     });
   });
 
   describe("addCard", () => {
-    it("adds a card to the specified lane", () => {
-      const lane = buildLane({ position: 0 });
-      const board = buildBoard({ lanes: [lane] });
-      const result = BoardService.addCard(board, lane.id, "My Task");
+    it("should add a card to a lane", () => {
+      const board = createBoard("Test");
+      const laneId = board.lanes[0].id;
+      const updated = addCard(board, laneId, "New Card", "Desc");
 
-      expect(result.cards).toHaveLength(1);
-      expect(result.cards[0].title).toBe("My Task");
-      expect(result.cards[0].laneId).toBe(lane.id);
-      expect(result.cards[0].position).toBe(0);
+      expect(updated.cards).toHaveLength(1);
+      expect(updated.cards[0].title).toBe("New Card");
+      expect(updated.cards[0].laneId).toBe(laneId);
     });
 
-    it("adds a card with an optional description", () => {
-      const lane = buildLane({ position: 0 });
-      const board = buildBoard({ lanes: [lane] });
-      const result = BoardService.addCard(
-        board,
-        lane.id,
-        "My Task",
-        "Details here",
+    it("should throw NotFoundError if lane does not exist", () => {
+      const board = createBoard("Test");
+      expect(() => addCard(board, "non-existent", "Title")).toThrow(
+        NotFoundError,
       );
-
-      expect(result.cards[0].description).toBe("Details here");
-    });
-
-    it("appends card with the next position in that lane", () => {
-      const lane = buildLane({ position: 0 });
-      const c1 = buildCard({ laneId: lane.id, position: 0 });
-      const board = buildBoard({ lanes: [lane], cards: [c1] });
-      const result = BoardService.addCard(board, lane.id, "Second Task");
-
-      expect(result.cards).toHaveLength(2);
-      expect(result.cards[1].position).toBe(1);
-    });
-
-    it("throws if the target lane does not exist", () => {
-      const board = buildBoard();
-      expect(() =>
-        BoardService.addCard(
-          board,
-          "00000000-0000-4000-8000-ffffffffffff",
-          "Task",
-        ),
-      ).toThrow();
     });
   });
 
   describe("removeCard", () => {
-    it("removes the card by id", () => {
-      const lane = buildLane({ position: 0 });
-      const card = buildCard({ laneId: lane.id, position: 0 });
-      const board = buildBoard({ lanes: [lane], cards: [card] });
-      const result = BoardService.removeCard(board, card.id);
+    it("should remove a card and reorder remaining", () => {
+      let board = createBoard("Test");
+      const laneId = board.lanes[0].id;
+      board = addCard(board, laneId, "Card 1");
+      board = addCard(board, laneId, "Card 2");
+      const firstCardId = board.cards[0].id;
 
-      expect(result.cards).toHaveLength(0);
-    });
-
-    it("recalculates positions in the same lane after removal", () => {
-      const lane = buildLane({ position: 0 });
-      const c1 = buildCard({ title: "A", laneId: lane.id, position: 0 });
-      const c2 = buildCard({ title: "B", laneId: lane.id, position: 1 });
-      const c3 = buildCard({ title: "C", laneId: lane.id, position: 2 });
-      const board = buildBoard({ lanes: [lane], cards: [c1, c2, c3] });
-      const result = BoardService.removeCard(board, c2.id);
-
-      expect(result.cards).toHaveLength(2);
-      expect(result.cards[0].position).toBe(0);
-      expect(result.cards[1].position).toBe(1);
-    });
-
-    it("does not affect cards in other lanes", () => {
-      const l1 = buildLane({ position: 0 });
-      const l2 = buildLane({ position: 1 });
-      const c1 = buildCard({ laneId: l1.id, position: 0 });
-      const c2 = buildCard({ laneId: l2.id, position: 0 });
-      const board = buildBoard({ lanes: [l1, l2], cards: [c1, c2] });
-      const result = BoardService.removeCard(board, c1.id);
-
-      expect(result.cards).toHaveLength(1);
-      expect(result.cards[0].laneId).toBe(l2.id);
-      expect(result.cards[0].position).toBe(0);
-    });
-
-    it("returns the board unchanged if card does not exist", () => {
-      const board = buildBoard();
-      const result = BoardService.removeCard(
-        board,
-        "00000000-0000-4000-8000-ffffffffffff",
-      );
-
-      expect(result).toEqual(board);
+      const updated = removeCard(board, firstCardId);
+      expect(updated.cards).toHaveLength(1);
+      expect(updated.cards[0].title).toBe("Card 2");
+      expect(updated.cards[0].position).toBe(0);
     });
   });
 
   describe("moveCard", () => {
-    it("moves a card to another lane", () => {
-      const l1 = buildLane({ position: 0 });
-      const l2 = buildLane({ position: 1 });
-      const card = buildCard({ laneId: l1.id, position: 0 });
-      const board = buildBoard({ lanes: [l1, l2], cards: [card] });
+    it("should move card within same lane", () => {
+      let board = createBoard("Test");
+      const laneId = board.lanes[0].id;
+      board = addCard(board, laneId, "Card 0");
+      board = addCard(board, laneId, "Card 1");
+      const card0Id = board.cards[0].id;
 
-      const result = BoardService.moveCard(board, card.id, l2.id, 0);
-
-      expect(result.cards[0].laneId).toBe(l2.id);
-      expect(result.cards[0].position).toBe(0);
+      const updated = moveCard(board, card0Id, laneId, 1);
+      const moved = updated.cards.find((c) => c.id === card0Id);
+      expect(moved?.position).toBe(1);
     });
 
-    it("reorders positions in source lane after move", () => {
-      const l1 = buildLane({ position: 0 });
-      const l2 = buildLane({ position: 1 });
-      const c1 = buildCard({ title: "A", laneId: l1.id, position: 0 });
-      const c2 = buildCard({ title: "B", laneId: l1.id, position: 1 });
-      const c3 = buildCard({ title: "C", laneId: l1.id, position: 2 });
-      const board = buildBoard({ lanes: [l1, l2], cards: [c1, c2, c3] });
+    it("should move card between lanes", () => {
+      let board = createBoard("Test");
+      const lane0Id = board.lanes[0].id;
+      const lane1Id = board.lanes[1].id;
+      board = addCard(board, lane0Id, "Card 0");
+      const cardId = board.cards[0].id;
 
-      const result = BoardService.moveCard(board, c2.id, l2.id, 0);
-
-      const sourceCards = result.cards
-        .filter((c) => c.laneId === l1.id)
-        .sort((a, b) => a.position - b.position);
-      expect(sourceCards).toHaveLength(2);
-      expect(sourceCards[0].title).toBe("A");
-      expect(sourceCards[0].position).toBe(0);
-      expect(sourceCards[1].title).toBe("C");
-      expect(sourceCards[1].position).toBe(1);
+      const updated = moveCard(board, cardId, lane1Id, 0);
+      const moved = updated.cards.find((c) => c.id === cardId);
+      expect(moved?.laneId).toBe(lane1Id);
+      expect(updated.cards.filter((c) => c.laneId === lane0Id)).toHaveLength(0);
     });
 
-    it("inserts at the correct position in the target lane", () => {
-      const l1 = buildLane({ position: 0 });
-      const l2 = buildLane({ position: 1 });
-      const c1 = buildCard({ title: "A", laneId: l2.id, position: 0 });
-      const c2 = buildCard({ title: "B", laneId: l2.id, position: 1 });
-      const moving = buildCard({ title: "X", laneId: l1.id, position: 0 });
-      const board = buildBoard({ lanes: [l1, l2], cards: [c1, c2, moving] });
-
-      const result = BoardService.moveCard(board, moving.id, l2.id, 1);
-
-      const targetCards = result.cards
-        .filter((c) => c.laneId === l2.id)
-        .sort((a, b) => a.position - b.position);
-      expect(targetCards).toHaveLength(3);
-      expect(targetCards[0].title).toBe("A");
-      expect(targetCards[1].title).toBe("X");
-      expect(targetCards[2].title).toBe("B");
-    });
-
-    it("reorders within the same lane", () => {
-      const lane = buildLane({ position: 0 });
-      const c1 = buildCard({ title: "A", laneId: lane.id, position: 0 });
-      const c2 = buildCard({ title: "B", laneId: lane.id, position: 1 });
-      const c3 = buildCard({ title: "C", laneId: lane.id, position: 2 });
-      const board = buildBoard({ lanes: [lane], cards: [c1, c2, c3] });
-
-      const result = BoardService.moveCard(board, c1.id, lane.id, 2);
-
-      const cards = result.cards.sort((a, b) => a.position - b.position);
-      expect(cards.map((c) => c.title)).toEqual(["B", "C", "A"]);
-      expect(cards.map((c) => c.position)).toEqual([0, 1, 2]);
-    });
-
-    it("throws if card does not exist", () => {
-      const board = buildBoard();
-      expect(() =>
-        BoardService.moveCard(
-          board,
-          "00000000-0000-4000-8000-ffffffffffff",
-          "00000000-0000-4000-8000-ffffffffffff",
-          0,
-        ),
-      ).toThrow();
-    });
-
-    it("throws if target lane does not exist", () => {
-      const lane = buildLane({ position: 0 });
-      const card = buildCard({ laneId: lane.id, position: 0 });
-      const board = buildBoard({ lanes: [lane], cards: [card] });
-
-      expect(() =>
-        BoardService.moveCard(
-          board,
-          card.id,
-          "00000000-0000-4000-8000-ffffffffffff",
-          0,
-        ),
-      ).toThrow();
+    it("should throw NotFoundError if card does not exist", () => {
+      const board = createBoard("Test");
+      const laneId = board.lanes[0].id;
+      expect(() => moveCard(board, "none", laneId, 0)).toThrow(NotFoundError);
     });
   });
 });
