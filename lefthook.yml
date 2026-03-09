@@ -6,6 +6,10 @@ pre-commit:
       glob: "*.{ts,tsx,js,jsx,astro,json}"
       stage_fixed: true
 
+    - name: typecheck
+      run: bun run typecheck
+      glob: "*.{ts,tsx,astro}"
+
     - name: lint docs
       run: bunx prettier --write {staged_files} && bunx markdownlint-cli2 --fix {staged_files}
       glob: "*.{md,mdx}"

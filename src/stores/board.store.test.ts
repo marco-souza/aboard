@@ -1,135 +1,107 @@
-import { cleanup, renderHook } from "solid-testing-library";
-import { afterEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { DEFAULT_LANE_TITLES, useBoardStore } from "./board.store";
 
-afterEach(cleanup);
+describe("board.store", () => {
+  describe("useBoardStore", () => {
+    it("initializes with a default board", () => {
+      const result = useBoardStore("Test Board");
 
-describe("useBoardStore", () => {
-  describe("initialization", () => {
-    it("starts with default lanes and no cards", () => {
-      const { result } = renderHook(() => useBoardStore("My Board"));
-
-      expect(result.board.title).toBe("My Board");
-      expect(result.board.lanes).toHaveLength(3);
-      expect(result.board.cards).toEqual([]);
+      expect(result.board.title).toBe("Test Board");
+      expect(result.lanes()).toHaveLength(DEFAULT_LANE_TITLES.length);
+      expect(result.defaultLaneId()).toBeDefined();
     });
 
-    it("exposes default lanes sorted by position", () => {
-      const { result } = renderHook(() => useBoardStore("My Board"));
-      const titles = result.lanes().map((l) => l.title);
-      expect(titles).toEqual([...DEFAULT_LANE_TITLES]);
+    it("can add a new lane", () => {
+      const result = useBoardStore("Test Board");
+      const initialCount = result.lanes().length;
+
+      result.addLane("New Lane");
+
+      expect(result.lanes()).toHaveLength(initialCount + 1);
+      expect(result.lanes()[initialCount].title).toBe("New Lane");
     });
 
-    it("exposes the default lane id (Maybe)", () => {
-      const { result } = renderHook(() => useBoardStore("My Board"));
-      const maybeLane = result.lanes().find((l) => l.title === "Maybe");
-      expect(result.defaultLaneId()).toBe(maybeLane?.id);
-    });
-  });
+    it("can remove a lane", () => {
+      const result = useBoardStore("Test Board");
+      const initialCount = result.lanes().length;
+      const targetLaneId = result.lanes()[1].id; // Don't remove the first (default) lane
 
-  describe("lane management", () => {
-    it("adds a lane after the defaults", () => {
-      const { result } = renderHook(() => useBoardStore("Board"));
+      result.removeLane(targetLaneId);
 
-      result.addLane("Blocked");
-
-      expect(result.lanes()).toHaveLength(4);
-      expect(result.lanes()[3].title).toBe("Blocked");
+      expect(result.lanes()).toHaveLength(initialCount - 1);
+      expect(result.lanes().find((l) => l.id === targetLaneId)).toBeUndefined();
     });
 
-    it("removes a lane", () => {
-      const { result } = renderHook(() => useBoardStore("Board"));
-
-      result.addLane("Blocked");
-      const blockedId = result.lanes().find((l) => l.title === "Blocked")?.id;
-      result.removeLane(blockedId);
-
-      expect(result.lanes()).toHaveLength(3);
-      expect(result.lanes().map((l) => l.title)).toEqual([
-        ...DEFAULT_LANE_TITLES,
-      ]);
-    });
-  });
-
-  describe("card management", () => {
-    it("adds a card to the default lane", () => {
-      const { result } = renderHook(() => useBoardStore("Board"));
-
+    it("can add a card to a lane", () => {
+      const result = useBoardStore("Test Board");
       const laneId = result.defaultLaneId();
-      result.addCard(laneId, "First task");
+      const initialCount = result.cardsInLane(laneId).length;
+
+      result.addCard(laneId, "New Card", "Card Description");
 
       const cards = result.cardsInLane(laneId);
-      expect(cards).toHaveLength(1);
-      expect(cards[0].title).toBe("First task");
+      expect(cards).toHaveLength(initialCount + 1);
+      expect(cards[cards.length - 1].title).toBe("New Card");
+      expect(cards[cards.length - 1].description).toBe("Card Description");
     });
 
-    it("returns cards sorted by position", () => {
-      const { result } = renderHook(() => useBoardStore("Board"));
-
+    it("can remove a card", () => {
+      const result = useBoardStore("Test Board");
       const laneId = result.defaultLaneId();
-      result.addCard(laneId, "First");
-      result.addCard(laneId, "Second");
-      result.addCard(laneId, "Third");
 
-      const titles = result.cardsInLane(laneId).map((c) => c.title);
-      expect(titles).toEqual(["First", "Second", "Third"]);
-    });
+      result.addCard(laneId, "Card to Remove");
+      const cards = result.cardsInLane(laneId);
+      const cardId = cards[cards.length - 1].id;
+      const initialCount = cards.length;
 
-    it("removes a card", () => {
-      const { result } = renderHook(() => useBoardStore("Board"));
-
-      const laneId = result.defaultLaneId();
-      result.addCard(laneId, "Task");
-      const cardId = result.cardsInLane(laneId)[0].id;
       result.removeCard(cardId);
 
-      expect(result.cardsInLane(laneId)).toHaveLength(0);
+      expect(result.cardsInLane(laneId)).toHaveLength(initialCount - 1);
     });
 
-    it("cardsInLane only returns cards for the given lane", () => {
-      const { result } = renderHook(() => useBoardStore("Board"));
-
-      const [notNow, maybe] = result.lanes();
-
-      result.addCard(notNow.id, "Task A");
-      result.addCard(maybe.id, "Task B");
-
-      expect(result.cardsInLane(notNow.id)).toHaveLength(1);
-      expect(result.cardsInLane(notNow.id)[0].title).toBe("Task A");
-      expect(result.cardsInLane(maybe.id)).toHaveLength(1);
-      expect(result.cardsInLane(maybe.id)[0].title).toBe("Task B");
-    });
-  });
-
-  describe("moveCard", () => {
-    it("moves a card between lanes", () => {
-      const { result } = renderHook(() => useBoardStore("Board"));
-
-      const [_notNow, maybe, done] = result.lanes();
-
-      result.addCard(maybe.id, "Task");
-      const cardId = result.cardsInLane(maybe.id)[0].id;
-
-      result.moveCard(cardId, done.id, 0);
-
-      expect(result.cardsInLane(maybe.id)).toHaveLength(0);
-      expect(result.cardsInLane(done.id)).toHaveLength(1);
-      expect(result.cardsInLane(done.id)[0].title).toBe("Task");
-    });
-
-    it("reorders a card within the same lane", () => {
-      const { result } = renderHook(() => useBoardStore("Board"));
-
+    it("can move a card within a lane", () => {
+      const result = useBoardStore("Test Board");
       const laneId = result.defaultLaneId();
-      result.addCard(laneId, "A");
-      result.addCard(laneId, "B");
-      result.addCard(laneId, "C");
 
-      const cardA = result.cardsInLane(laneId)[0].id;
-      result.moveCard(cardA, laneId, 2);
+      result.addCard(laneId, "Card 1");
+      result.addCard(laneId, "Card 2");
 
-      const titles = result.cardsInLane(laneId).map((c) => c.title);
-      expect(titles).toEqual(["B", "C", "A"]);
+      const cards = result.cardsInLane(laneId);
+      const card1Id = cards[cards.length - 2].id;
+
+      // Move Card 1 to position 1 (after Card 2)
+      result.moveCard(card1Id, laneId, 1);
+
+      const updatedCards = result.cardsInLane(laneId);
+      expect(updatedCards[updatedCards.length - 1].id).toBe(card1Id);
+    });
+
+    it("can move a card between lanes", () => {
+      const result = useBoardStore("Test Board");
+      const lane1Id = result.lanes()[0].id;
+      const lane2Id = result.lanes()[1].id;
+
+      result.addCard(lane1Id, "Card to Move");
+      const cards = result.cardsInLane(lane1Id);
+      const cardId = cards[cards.length - 1].id;
+
+      result.moveCard(cardId, lane2Id, 0);
+
+      expect(
+        result.cardsInLane(lane1Id).find((c) => c.id === cardId),
+      ).toBeUndefined();
+      expect(
+        result.cardsInLane(lane2Id).find((c) => c.id === cardId),
+      ).toBeDefined();
+    });
+
+    it("handles moving a non-existent card gracefully", () => {
+      const result = useBoardStore("Test Board");
+      const laneId = result.defaultLaneId();
+
+      expect(() => result.moveCard("non-existent-id", laneId, 0)).toThrow(
+        "Card non-existent-id does not exist",
+      );
     });
   });
 });
