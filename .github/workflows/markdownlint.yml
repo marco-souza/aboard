@@ -1,0 +1,28 @@
+name: Lint Markdown
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  markdownlint:
+    name: Run markdownlint-cli2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Lint Markdown Files
+        run: bun run lint:md
+
+      - name: Check for broken links
+        run: bun run lint:links

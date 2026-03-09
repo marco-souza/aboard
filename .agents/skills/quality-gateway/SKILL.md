@@ -38,6 +38,7 @@ After creating or modifying code:
    - Formatting: Auto-applied
 
 4. **Verify tests still pass** (if applicable):
+
    ```bash
    bun run test -- path/to/file.test.ts
    ```
