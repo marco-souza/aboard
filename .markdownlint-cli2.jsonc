@@ -1,14 +1,6 @@
 {
   "config": {
-    "MD013": false,
-    "MD033": false,
-    "MD041": false
+    "line-length": false
   },
-  "ignores": [
-    "node_modules",
-    "dist",
-    ".git",
-    ".astro",
-    ".opencode/node_modules"
-  ]
+  "ignores": ["node_modules", "dist", ".astro", ".opencode"]
 }
