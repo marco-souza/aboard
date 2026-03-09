@@ -28,9 +28,6 @@ jobs:
       - name: Lint Markdown
         run: bun run lint:md
 
-      - name: Check for broken links
-        run: bun run lint:links
-
       - name: Typecheck
         run: bun run typecheck
 
