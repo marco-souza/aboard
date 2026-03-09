@@ -2,9 +2,9 @@ name: Quality Gateway
 
 on:
   push:
-    - main
+    branches:
+      - main
   pull_request:
-    - main
 
 jobs:
   quality-gateway:

@@ -21,7 +21,7 @@ export function buildLane(overrides: Partial<Lane> = {}): Lane {
 }
 
 export function buildCard(overrides: Partial<Card> = {}): Card {
-  const now = new Date().toISOString();
+  const now = new Date();
   return {
     id: nextUuid(),
     title: "Card",
