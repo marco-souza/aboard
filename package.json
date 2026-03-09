@@ -10,7 +10,7 @@
     "lint": "biome lint . && bun run lint:md",
     "lint:md": "markdownlint-cli2 \"**/*.md\"",
     "lint:links": "find . -name \"*.md\" -not -path \"./node_modules/*\" -not -path \"./dist/*\" -not -path \"./.opencode/node_modules/*\" -exec markdown-link-check -c .markdown-link-check.json {} \\;",
-    "typecheck": "astro check",
+    "typecheck": "astro check --warnings-as-errors",
     "fix": "biome check --write --unsafe . && bun run fix:md",
     "fix:md": "prettier --write \"**/*.md\" && markdownlint-cli2 \"**/*.md\" --fix",
     "test": "vitest",

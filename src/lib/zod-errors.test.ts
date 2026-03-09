@@ -6,7 +6,9 @@ describe("Zod Error Utilities", () => {
   describe("createErrorSummary", () => {
     it("should create human-readable error summary", () => {
       const schema = z.object({
-        email: z.string().email("Invalid email"),
+        email: z
+          .string()
+          .refine((val) => val.includes("@"), { message: "Invalid email" }),
         age: z.number().positive("Must be positive"),
       });
 
