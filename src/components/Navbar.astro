@@ -5,16 +5,16 @@ interface Props {
   boardName?: string;
 }
 ---
-<nav class="navbar sticky top-1 z-50 bg-base-100/80 backdrop-blur-xl border-b border-base-300">
+<nav class="navbar sticky top-1 z-50 px-4 bg-base-100/80 backdrop-blur-xl border-b border-base-300">
   <div class="flex-2">
-    <a href={routes.public.home} class="btn btn-ghost text-xl font-bold">
-      <span class="gradient-text">Aboard</span>
+    <a href={routes.public.home} class="text-2xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2 inline-block hover:scale-105 transition-transform cursor-pointer">
+      Aboard
     </a>
   </div>
 
   <div class="flex-none gap-5">
-    <a href={routes.public.pricing} class="btn btn-ghost">Pricing</a>
-    <a href={routes.public.login} class="btn btn-ghost">Sign in</a>
-    <a href={routes.public.pricing} class="btn btn-primary btn-rounded">Get started</a>
+    <a href={routes.public.pricing} class="btn btn-ghost hover:btn-outlined">Pricing</a>
+    <a href={routes.public.login} class="btn btn-ghost hover:btn-outlined">Sign in</a>
+    <a href={routes.public.pricing} class="btn btn-primary hover:btn-outlined">Get started</a>
   </div>
 </nav>
