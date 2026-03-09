@@ -1,0 +1,29 @@
+---
+import Footer from "~/components/landing/Footer.astro";
+import PricingTable from "~/components/landing/Pricing.astro";
+import Layout from "~/layouts/Layout.astro";
+import { routes } from "~/server/contants";
+---
+
+<Layout title="Pricing — Aboard" showNavbar={false}>
+  <main class="min-h-screen flex flex-col">
+    <nav class="navbar sticky top-0 z-50 bg-base-100/80 backdrop-blur-xl border-b border-base-300">
+      <div class="flex-1">
+        <a href={routes.public.home} class="btn btn-ghost text-xl font-bold">
+          <span class="gradient-text">Aboard</span>
+        </a>
+      </div>
+      <div class="flex-none gap-4 flex items-center">
+        <a href={routes.public.pricing} class="text-primary font-bold border-b-2 border-primary px-4 py-2 transition-all">Pricing</a>
+        <a href={routes.public.login} class="btn btn-ghost">Sign in</a>
+        <a href={routes.public.login} class="btn gradient-btn text-white border-0">Get started</a>
+      </div>
+    </nav>
+
+    <div class="flex-1">
+      <PricingTable />
+    </div>
+
+    <Footer />
+  </main>
+</Layout>
