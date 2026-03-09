@@ -26,10 +26,7 @@ export function extractOAuthUser(
       case "google": {
         const user = userSessionSchema.parse({
           name: payload.name || "Google User",
-          login:
-            (typeof payload.email === "string"
-              ? payload.email.split("@")[0]
-              : "user") || "user",
+          login: payload.email ?? "anonymous",
           email: payload.email,
           provider: "google",
           avatar: payload.picture,
