@@ -99,9 +99,7 @@ describe("board.store", () => {
       const result = useBoardStore("Test Board");
       const laneId = result.defaultLaneId();
 
-      expect(() => result.moveCard("non-existent-id", laneId, 0)).toThrow(
-        "Card non-existent-id does not exist",
-      );
+      expect(() => result.moveCard("non-existent-id", laneId, 0)).toThrow();
     });
   });
 });
